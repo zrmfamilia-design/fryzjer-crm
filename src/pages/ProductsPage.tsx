@@ -38,8 +38,8 @@ const ProductsPage: React.FC = () => {
         setName(product.name);
         setBrand(product.brand || '');
         setPrice(product.price);
-        setBaseWeight(product.baseWeight);
-        setCurrentStock(product.currentStock);
+        setBaseWeight(product.baseWeight || (product as any).base_weight);
+        setCurrentStock(product.currentStock || (product as any).current_stock);
         setShowAddForm(true);
     };
 
@@ -420,10 +420,10 @@ const ProductsPage: React.FC = () => {
                                     <td className="px-6 py-4 text-center">
                                         <div className="flex flex-col items-center">
                                             <div className="flex items-center gap-2">
-                                                <span className={`text-lg font-black ${product.currentStock < (product.baseWeight * 0.2) ? 'text-red-500' : 'text-gray-900'}`}>
-                                                    {Math.round(product.currentStock)}g
+                                                <span className={`text-lg font-black ${((product as any).current_stock || product.currentStock) < (((product as any).base_weight || product.baseWeight) * 0.2) ? 'text-red-500' : 'text-gray-900'}`}>
+                                                    {Math.round((product as any).current_stock || product.currentStock)}g
                                                 </span>
-                                                <span className="text-[10px] text-gray-400 font-bold">/ {product.baseWeight}g</span>
+                                                <span className="text-[10px] text-gray-400 font-bold">/ {((product as any).base_weight || product.baseWeight)}g</span>
                                             </div>
                                             <div className="w-24 h-1.5 bg-gray-100 rounded-full mt-1 overflow-hidden">
                                                 <div
@@ -450,7 +450,7 @@ const ProductsPage: React.FC = () => {
                                     </td>
                                     <td className="px-6 py-4 text-center">
                                         <span className="text-primary font-bold text-xs">
-                                            {(product.price / product.baseWeight).toFixed(2)} PLN
+                                            {(((product as any).price || product.price) / ((product as any).base_weight || product.baseWeight)).toFixed(2)} PLN
                                         </span>
                                     </td>
                                     <td className="px-6 py-4 text-right">

@@ -135,10 +135,11 @@ const ClientsPage: React.FC = () => {
             if (newClients.length > 0) {
                 if (confirm(`Czy chcesz zaimportować ${newClients.length} klientów?`)) {
                     const { error } = await supabase.from('clients').insert(
-                        newClients.map((client: any) => {
-                            const { id, ...rest } = client;
-                            return rest;
-                        })
+                        newClients.map((client: any) => ({
+                            name: client.name,
+                            phone: client.phone,
+                            notes: client.notes
+                        }))
                     );
                     if (error) return alert(`Błąd importu: ${error.message}`);
                     alert('Import zakończony sukcesem!');
