@@ -188,14 +188,21 @@ const VisitModal: React.FC<VisitModalProps> = ({ isOpen, onClose, initialDate, v
                     last_visit: visitDate
                 }).select().single();
 
-                if (clientErr) throw clientErr;
+                if (clientErr) {
+                    alert(`Błąd dodawania klienta: ${clientErr.message}`);
+                    throw clientErr;
+                }
                 finalClientId = newClient.id;
             } else {
                 if (!finalClientId) return alert('Wybierz klienta');
-                await supabase.from('clients').update({
+                const { error: clientUpdErr } = await supabase.from('clients').update({
                     last_visit: visitDate,
                     notes: clientGlobalNotes
                 }).eq('id', finalClientId);
+                if (clientUpdErr) {
+                    alert(`Błąd aktualizacji klienta: ${clientUpdErr.message}`);
+                    throw clientUpdErr;
+                }
             }
 
             const visitData = {
@@ -213,17 +220,25 @@ const VisitModal: React.FC<VisitModalProps> = ({ isOpen, onClose, initialDate, v
                 // Refund old products stock
                 const oldUsed = existingVisit.used_products || existingVisit.usedProducts || [];
                 for (const oldProd of oldUsed) {
-                    const p = products?.find(prod => prod.id === oldProd.productId);
+                    const p = products?.find(prod => prod.id === (oldProd.productId || oldProd.product_id));
                     if (p) {
-                        const cur = p.current_stock || p.currentStock;
+                        const cur = p.current_stock || p.currentStock || 0;
                         await supabase.from('products').update({
                             current_stock: cur + oldProd.amountUsed
-                        }).eq('id', oldProd.productId);
+                        }).eq('id', (oldProd.productId || oldProd.product_id));
                     }
                 }
-                await supabase.from('visits').update(visitData).eq('id', visitId);
+                const { error: visitUpdErr } = await supabase.from('visits').update(visitData).eq('id', visitId);
+                if (visitUpdErr) {
+                    alert(`Błąd aktualizacji wizyty: ${visitUpdErr.message}`);
+                    throw visitUpdErr;
+                }
             } else {
-                await supabase.from('visits').insert([visitData]);
+                const { error: visitInsErr } = await supabase.from('visits').insert([visitData]);
+                if (visitInsErr) {
+                    alert(`Błąd dodawania wizyty: ${visitInsErr.message}`);
+                    throw visitInsErr;
+                }
             }
 
             // Deduct new products stock

@@ -40,19 +40,21 @@ const ServicesPage: React.FC = () => {
         }
 
         if (editId) {
-            await supabase.from('services').update({
+            const { error } = await supabase.from('services').update({
                 name: name as any,
                 default_price: priceNum,
                 duration: durationNum,
                 color
             }).eq('id', editId);
+            if (error) return alert(`Błąd aktualizacji: ${error.message}`);
         } else {
-            await supabase.from('services').insert({
+            const { error } = await supabase.from('services').insert({
                 name: name as any,
                 default_price: priceNum,
                 duration: durationNum,
                 color
             });
+            if (error) return alert(`Błąd dodawania: ${error.message}`);
         }
 
         resetForm();
@@ -69,7 +71,8 @@ const ServicesPage: React.FC = () => {
 
     const handleDelete = async (id: any) => {
         if (confirm("Czy na pewno chcesz usunąć tę usługę?")) {
-            await supabase.from('services').delete().eq('id', id);
+            const { error } = await supabase.from('services').delete().eq('id', id);
+            if (error) alert(`Błąd usuwania: ${error.message}`);
         }
     };
 
