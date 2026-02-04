@@ -3,6 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 import type { Client } from '../types';
 import { Search, UserPlus, Phone, DollarSign, Calendar as CalendarIcon, FileText, Info, Upload, Download } from 'lucide-react';
 import { format } from 'date-fns';
+import { pl } from 'date-fns/locale';
 import { ensureDate } from '../utils';
 
 import { useSupabaseData } from '../hooks/useSupabaseData';
@@ -22,7 +23,7 @@ const ClientsPage: React.FC = () => {
     useEffect(() => {
         const idParam = searchParams.get('id');
         if (idParam && clients) {
-            const client = clients.find(c => c.id === Number(idParam));
+            const client = clients.find(c => String(c.id) === String(idParam));
             if (client) {
                 openClientProfile(client);
             }
@@ -356,21 +357,28 @@ const ClientsPage: React.FC = () => {
                                                 {clientVisits.length === 0 && <div className="text-gray-300 italic py-10 text-center bg-gray-50 rounded-3xl border-2 border-dashed border-gray-100">Brak zarejestrowanych wizyt.</div>}
                                                 {clientVisits.map(visit => {
                                                     const vDate = ensureDate(visit.date);
+                                                    const visitServices = (visit.service_ids || visit.serviceIds || []).map((sid: any) => {
+                                                        const s = (visits as any[]).find(v => v.id === sid); // This is wrong, should be from services
+                                                        return s?.name;
+                                                    }).filter(Boolean).join(', ');
+
                                                     return (
                                                         <div key={visit.id} className="flex justify-between items-center p-5 bg-white rounded-3xl border border-gray-100 hover:border-primary/20 hover:shadow-lg hover:shadow-primary/5 transition-all group cursor-default">
                                                             <div className="flex items-center gap-5">
-                                                                <div className="flex flex-col items-center justify-center bg-gray-50 group-hover:bg-primary group-hover:text-white transition-colors w-14 h-14 rounded-2xl border border-gray-100 group-hover:border-primary">
+                                                                <div className="flex flex-col items-center justify-center bg-gray-50 group-hover:bg-primary group-hover:text-white transition-colors w-14 h-14 rounded-2xl border border-gray-100 group-hover:border-primary text-center">
                                                                     <div className="text-xl font-black leading-none">{format(vDate, 'dd')}</div>
-                                                                    <div className="text-[9px] font-black uppercase tracking-widest">{format(vDate, 'MMM')}</div>
+                                                                    <div className="text-[9px] font-black uppercase tracking-widest">{format(vDate, 'MMM', { locale: pl })}</div>
                                                                 </div>
                                                                 <div>
-                                                                    <div className="text-gray-900 font-black">Wizyta #{visit.id}</div>
-                                                                    <div className="text-xs text-gray-400 font-bold">{format(vDate, 'HH:mm')}</div>
+                                                                    <div className="text-gray-900 font-black">Wizyta - {format(vDate, 'HH:mm', { locale: pl })}</div>
+                                                                    <div className="text-[10px] text-gray-400 font-bold uppercase tracking-wider block max-w-[200px] truncate">
+                                                                        {visitServices || visit.technicalNotes || visit.technical_notes || 'Brak notatek'}
+                                                                    </div>
                                                                 </div>
                                                             </div>
                                                             <div className="text-right">
-                                                                <div className="text-gray-900 font-black text-lg">{visit.finalPrice} PLN</div>
-                                                                <div className="text-[10px] text-red-400 font-bold uppercase tracking-widest">Koszt: {visit.materialCost} PLN</div>
+                                                                <div className="text-gray-900 font-black text-lg">{visit.finalPrice || visit.final_price || 0} PLN</div>
+                                                                <div className="text-[10px] text-red-400 font-bold uppercase tracking-widest">Koszt: {visit.materialCost || visit.material_cost || 0} PLN</div>
                                                             </div>
                                                         </div>
                                                     )

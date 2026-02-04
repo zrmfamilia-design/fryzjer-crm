@@ -101,7 +101,7 @@ const ReportsPage: React.FC = () => {
                 const costs = dayVisits.reduce((acc, v) => acc + (v.material_cost || v.materialCost || 0), 0) +
                     dayExpenses.reduce((acc, e) => acc + e.amount, 0);
                 return {
-                    name: format(date, 'dd.MM'),
+                    name: format(date, 'dd.MM', { locale: pl }),
                     Revenue: revenue,
                     Costs: costs,
                     Profit: revenue - costs,

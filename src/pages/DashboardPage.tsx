@@ -67,7 +67,7 @@ const DashboardPage: React.FC = () => {
                     </div>
                 </div>
                 <div className="text-sm font-black bg-primary/10 px-6 py-3 rounded-2xl text-primary border-2 border-primary/5 shadow-sm">
-                    {format(now, 'dd.MM.yyyy')}
+                    {format(now, 'dd.MM.yyyy', { locale: pl })}
                 </div>
             </div>
 
@@ -184,7 +184,7 @@ const DashboardPage: React.FC = () => {
                                     <div key={visit.id} className="relative flex items-start gap-6 group">
                                         {/* Time Stamp */}
                                         <div className="flex-none w-14 text-right pt-2 font-bold text-gray-900 text-sm">
-                                            {format(ensureDate(visit.date), 'HH:mm')}
+                                            {format(ensureDate(visit.date), 'HH:mm', { locale: pl })}
                                         </div>
 
                                         {/* Timeline Dot */}

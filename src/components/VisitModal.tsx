@@ -10,7 +10,7 @@ interface VisitModalProps {
     isOpen: boolean;
     onClose: () => void;
     initialDate?: Date;
-    visitId?: number;
+    visitId?: string | number;
 }
 
 const VisitModal: React.FC<VisitModalProps> = ({ isOpen, onClose, initialDate, visitId }) => {
@@ -30,7 +30,7 @@ const VisitModal: React.FC<VisitModalProps> = ({ isOpen, onClose, initialDate, v
     }, [visitId, isOpen]);
 
     const [date, setDate] = useState('');
-    const [clientId, setClientId] = useState<number | ''>('');
+    const [clientId, setClientId] = useState<string | number | ''>('');
     const [serviceIds, setServiceIds] = useState<number[]>([]);
     const [finalPrice, setFinalPrice] = useState<number>(0);
     const [materialCost, setMaterialCost] = useState<number>(0);
@@ -107,7 +107,8 @@ const VisitModal: React.FC<VisitModalProps> = ({ isOpen, onClose, initialDate, v
 
     // Auto-calculate material cost when products change
     useEffect(() => {
-        const totalProductCost = usedProducts.reduce((sum, p) => sum + p.calculatedCost, 0);
+        if (!usedProducts) return;
+        const totalProductCost = usedProducts.reduce((sum, p) => sum + (p.calculatedCost || 0), 0);
         setMaterialCost(Math.round(totalProductCost * 100) / 100);
     }, [usedProducts]);
 
@@ -368,7 +369,7 @@ const VisitModal: React.FC<VisitModalProps> = ({ isOpen, onClose, initialDate, v
                         ) : (
                             <select
                                 value={clientId}
-                                onChange={e => setClientId(Number(e.target.value))}
+                                onChange={e => setClientId(e.target.value)}
                                 className="w-full bg-gray-50 border-2 border-gray-100 rounded-2xl px-5 py-4 text-gray-900 font-bold focus:border-primary focus:bg-white outline-none appearance-none cursor-pointer"
                             >
                                 <option value="">-- Wybierz klienta --</option>
