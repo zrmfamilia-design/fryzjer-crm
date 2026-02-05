@@ -250,14 +250,14 @@ const ProductsPage: React.FC = () => {
     }, [products, visits]);
 
     return (
-        <div className="h-full overflow-y-auto p-8 space-y-8 pb-20 scrollbar-hide">
+        <div className="h-full overflow-y-auto p-4 sm:p-8 space-y-6 sm:space-y-8 pb-20 scrollbar-hide">
             {/* Header */}
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 bg-surface p-6 rounded-3xl border border-border-color shadow-xl shadow-gray-200/50 dark:shadow-none transition-colors">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 bg-surface p-4 sm:p-6 rounded-3xl border border-border-color shadow-xl shadow-gray-200/50 dark:shadow-none transition-colors">
                 <div>
-                    <h1 className="text-2xl font-black text-text-main flex items-center gap-3">
+                    <h1 className="text-xl sm:text-2xl font-black text-text-main flex items-center gap-3">
                         <Package className="text-primary" /> Magazyn Produktów
                     </h1>
-                    <p className="text-text-muted text-sm font-medium">Zarządzaj farbami i preparatami używanymi w salonie.</p>
+                    <p className="text-text-muted text-xs sm:text-sm font-medium">Zarządzaj farbami i preparatami używanymi w salonie.</p>
                 </div>
                 <div className="flex flex-wrap gap-3 mt-4 md:mt-0">
                     <input
@@ -268,7 +268,7 @@ const ProductsPage: React.FC = () => {
                     />
                     <button
                         onClick={exportLowStockCSV}
-                        className="bg-red-50 text-red-600 px-4 py-3 rounded-2xl font-black hover:bg-red-100 transition-all flex items-center gap-2 text-sm border-2 border-red-100 shadow-sm"
+                        className="flex-1 sm:flex-none justify-center bg-red-50 text-red-600 px-4 py-3 rounded-2xl font-black hover:bg-red-100 transition-all flex items-center gap-2 text-xs border-2 border-red-100 shadow-sm"
                         title="Eksportuj listę zakupową (produkty poniżej 30%)"
                     >
                         <AlertCircle size={18} /> Eksportuj Braki
@@ -290,7 +290,7 @@ const ProductsPage: React.FC = () => {
                             if (showAddForm) resetForm();
                             else setShowAddForm(true);
                         }}
-                        className="bg-primary hover:bg-primary-hover text-white px-6 py-3 rounded-2xl font-black shadow-lg shadow-primary/20 transition-all flex items-center gap-2"
+                        className="w-full sm:w-auto justify-center bg-primary hover:bg-primary-hover text-white px-6 py-4 sm:py-3 rounded-2xl font-black shadow-lg shadow-primary/20 transition-all flex items-center gap-2"
                     >
                         <Plus size={20} /> {showAddForm ? 'Anuluj' : 'Dodaj Produkt'}
                     </button>
@@ -299,7 +299,7 @@ const ProductsPage: React.FC = () => {
 
             {/* Add Product Form */}
             {showAddForm && (
-                <div className="bg-surface p-8 rounded-3xl border-2 border-primary/10 shadow-xl animate-in fade-in slide-in-from-top-4 duration-300 transition-colors">
+                <div className="bg-surface p-4 sm:p-8 rounded-3xl border-2 border-primary/10 shadow-xl animate-in fade-in slide-in-from-top-4 duration-300 transition-colors">
                     <form onSubmit={handleAddProduct} className="grid grid-cols-1 md:grid-cols-4 gap-6">
                         <div className="space-y-2">
                             <label className="text-[10px] font-black text-text-muted uppercase tracking-widest ml-2">Nazwa Produktu</label>
@@ -391,7 +391,7 @@ const ProductsPage: React.FC = () => {
                     </div>
                 </div>
 
-                <div className="overflow-x-auto">
+                <div className="table-container">
                     <table className="w-full text-left">
                         <thead>
                             <tr className="bg-gray-50/50 border-b border-gray-100">

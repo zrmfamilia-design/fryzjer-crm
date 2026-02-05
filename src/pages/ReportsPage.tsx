@@ -160,58 +160,58 @@ const ReportsPage: React.FC = () => {
     if (!stats) return <div className="p-10 text-center text-gray-500 font-bold">Analizowanie danych...</div>;
 
     return (
-        <div className="h-full overflow-y-auto p-8 space-y-8 pb-20 scrollbar-hide">
+        <div className="h-full overflow-y-auto p-4 sm:p-8 space-y-6 sm:space-y-8 pb-20 scrollbar-hide">
             {/* Header with Filters */}
-            <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-6 bg-white p-6 rounded-3xl border border-gray-100 shadow-xl shadow-gray-200/50">
+            <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 bg-white p-4 sm:p-6 rounded-3xl border border-gray-100 shadow-xl shadow-gray-200/50">
                 <div>
-                    <h1 className="text-2xl font-black text-gray-900 flex items-center gap-3">
+                    <h1 className="text-xl sm:text-2xl font-black text-gray-900 flex items-center gap-3">
                         <TrendingUp className="text-primary" /> Analityka Biznesowa
                     </h1>
-                    <p className="text-gray-400 text-sm font-medium">Śledź wyniki salonu i trendy sprzedaży.</p>
+                    <p className="text-gray-400 text-xs sm:text-sm font-medium">Śledź wyniki salonu i trendy sprzedaży.</p>
                 </div>
 
-                <div className="flex flex-wrap items-center gap-4 bg-gray-50 p-2 rounded-2xl border border-gray-100">
-                    <div className="flex bg-white p-1 rounded-xl shadow-sm border border-gray-100">
+                <div className="flex flex-col sm:flex-row sm:items-center gap-4 bg-gray-50 p-2 rounded-2xl border border-gray-100 w-full lg:w-auto">
+                    <div className="flex bg-white p-1 rounded-xl shadow-sm border border-gray-100 w-full sm:w-auto">
                         <button
                             onClick={() => setSelectionMode('month')}
-                            className={`px-4 py-2 rounded-lg text-xs font-black transition-all ${selectionMode === 'month' ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'text-gray-400 hover:bg-gray-50'}`}
+                            className={`flex-1 sm:flex-none px-4 py-2 rounded-lg text-xs font-black transition-all ${selectionMode === 'month' ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'text-gray-400 hover:bg-gray-50'}`}
                         >
                             MIESIĘCZNIE
                         </button>
                         <button
                             onClick={() => setSelectionMode('manual')}
-                            className={`px-4 py-2 rounded-lg text-xs font-black transition-all ${selectionMode === 'manual' ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'text-gray-400 hover:bg-gray-50'}`}
+                            className={`flex-1 sm:flex-none px-4 py-2 rounded-lg text-xs font-black transition-all ${selectionMode === 'manual' ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'text-gray-400 hover:bg-gray-50'}`}
                         >
                             MANUALNIE
                         </button>
                     </div>
 
-                    <div className="h-8 w-px bg-gray-200 mx-2" />
+                    <div className="hidden sm:block h-8 w-px bg-gray-200 mx-2" />
 
                     {selectionMode === 'month' ? (
                         <select
                             value={selectedMonth}
                             onChange={(e) => setSelectedMonth(e.target.value)}
-                            className="bg-white border border-gray-200 rounded-xl px-4 py-2 text-sm font-bold text-gray-700 focus:border-primary outline-none shadow-sm cursor-pointer min-w-[200px]"
+                            className="w-full sm:w-auto bg-white border border-gray-200 rounded-xl px-4 py-2 text-sm font-bold text-gray-700 focus:border-primary outline-none shadow-sm cursor-pointer min-w-[150px] sm:min-w-[200px]"
                         >
                             {availableMonths.map(m => (
                                 <option key={m.value} value={m.value}>{m.label}</option>
                             ))}
                         </select>
                     ) : (
-                        <div className="flex items-center gap-2">
+                        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
                             <input
                                 type="date"
                                 value={startDate}
                                 onChange={e => setStartDate(e.target.value)}
-                                className="bg-white border border-gray-200 rounded-xl px-4 py-2 text-sm font-bold text-gray-700 focus:border-primary outline-none shadow-sm"
+                                className="bg-white border border-gray-200 rounded-xl px-4 py-2 text-sm font-bold text-gray-700 focus:border-primary outline-none shadow-sm w-full sm:w-auto"
                             />
-                            <span className="text-gray-300">—</span>
+                            <span className="hidden sm:inline text-gray-300">—</span>
                             <input
                                 type="date"
                                 value={endDate}
                                 onChange={e => setEndDate(e.target.value)}
-                                className="bg-white border border-gray-200 rounded-xl px-4 py-2 text-sm font-bold text-gray-700 focus:border-primary outline-none shadow-sm"
+                                className="bg-white border border-gray-200 rounded-xl px-4 py-2 text-sm font-bold text-gray-700 focus:border-primary outline-none shadow-sm w-full sm:w-auto"
                             />
                         </div>
                     )}
@@ -247,10 +247,10 @@ const ReportsPage: React.FC = () => {
             {/* Charts Grid */}
             <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
                 {/* Revenue Trend */}
-                <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-xl shadow-gray-200/50">
-                    <div className="flex justify-between items-center mb-10">
-                        <h3 className="text-lg font-black text-gray-900 tracking-tight">Trend Przychodów (6 msc)</h3>
-                        <div className="flex items-center gap-1.5 bg-gray-50 px-3 py-1 rounded-full border border-gray-100">
+                <div className="bg-white p-4 sm:p-8 rounded-3xl border border-gray-100 shadow-xl shadow-gray-200/50">
+                    <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4 mb-10">
+                        <h3 className="text-lg font-black text-gray-900 tracking-tight">Trend Przychodów</h3>
+                        <div className="flex items-center gap-1.5 bg-gray-50 px-3 py-1 rounded-full border border-gray-100 w-fit">
                             <div className="w-2 h-2 rounded-full bg-primary shadow-sm" />
                             <span className="text-[10px] font-black uppercase text-gray-400">Przychód Netto</span>
                         </div>
@@ -308,12 +308,12 @@ const ReportsPage: React.FC = () => {
             </div>
 
             {/* Financial Comparison Bar Chart */}
-            <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-xl shadow-gray-200/50">
-                <div className="flex justify-between items-center mb-10">
+            <div className="bg-white p-4 sm:p-8 rounded-3xl border border-gray-100 shadow-xl shadow-gray-200/50">
+                <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-6 mb-10">
                     <h3 className="text-lg font-black text-gray-900 tracking-tight">
                         {stats.isDaily ? 'Analiza Dzienna' : 'Analiza Miesięczna'}: Przychody vs Koszty
                     </h3>
-                    <div className="flex items-center gap-4">
+                    <div className="flex flex-wrap items-center gap-4">
                         <div className="flex items-center gap-1.5">
                             <div className="w-3 h-3 rounded bg-blue-500" />
                             <span className="text-[10px] font-black uppercase text-gray-400 font-bold">Przychód</span>
@@ -350,12 +350,12 @@ const ReportsPage: React.FC = () => {
             {/* Bottom Row: Client Ranking and Detailed Stats */}
             <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
                 {/* Top Clients */}
-                <div className="xl:col-span-2 bg-white p-8 rounded-3xl border border-gray-100 shadow-xl shadow-gray-200/50 overflow-hidden">
+                <div className="xl:col-span-2 bg-white p-4 sm:p-8 rounded-3xl border border-gray-100 shadow-xl shadow-gray-200/50 overflow-hidden">
                     <div className="flex items-center gap-3 mb-8">
                         <Award size={24} className="text-yellow-500" />
                         <h3 className="text-lg font-black text-gray-900 tracking-tight">Najlepsi Klienci w Okresie</h3>
                     </div>
-                    <div className="overflow-x-auto">
+                    <div className="table-container">
                         <table className="w-full">
                             <thead>
                                 <tr className="bg-gray-50/50 border-b border-gray-100">
@@ -394,7 +394,7 @@ const ReportsPage: React.FC = () => {
                 </div>
 
                 {/* Efficiency Stats */}
-                <div className="bg-primary p-10 rounded-3xl shadow-2xl shadow-primary/30 flex flex-col justify-between text-white relative overflow-hidden">
+                <div className="bg-primary p-6 sm:p-10 rounded-3xl shadow-2xl shadow-primary/30 flex flex-col justify-between text-white relative overflow-hidden">
                     <TrendingUp size={160} className="absolute -right-10 -bottom-10 opacity-10 rotate-12" />
                     <div>
                         <div className="bg-white/20 w-12 h-12 rounded-2xl flex items-center justify-center mb-6 backdrop-blur-md">
@@ -414,7 +414,7 @@ const ReportsPage: React.FC = () => {
 };
 
 const StatCard = ({ title, value, subvalue, trend, icon, iconBg }: { title: string, value: string, subvalue?: string, trend: number, icon: React.ReactNode, iconBg: string }) => (
-    <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-xl shadow-gray-200/50 flex flex-col justify-between group hover:border-primary/30 transition-all">
+    <div className="bg-white p-6 sm:p-8 rounded-3xl border border-gray-100 shadow-xl shadow-gray-200/50 flex flex-col justify-between group hover:border-primary/30 transition-all">
         <div className="flex justify-between items-start mb-6">
             <div className={`${iconBg} p-4 rounded-2xl shadow-lg shadow-gray-200/50 group-hover:scale-110 transition-transform`}>
                 {icon}

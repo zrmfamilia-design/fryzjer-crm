@@ -291,27 +291,15 @@ const VisitModal: React.FC<VisitModalProps> = ({ isOpen, onClose, initialDate, v
     const cn = (...inputs: (string | undefined | null | false)[]) => inputs.filter(Boolean).join(' ');
 
     return (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-gray-900/60 backdrop-blur-md p-4 animate-in fade-in duration-300">
-            <div className="bg-surface w-full max-w-xl rounded-3xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden border border-border-color transition-colors">
+        <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center bg-gray-900/60 backdrop-blur-md p-0 sm:p-4 animate-in fade-in duration-300" onClick={handleClose}>
+            <div className="bg-surface w-full max-w-xl rounded-t-[32px] sm:rounded-3xl shadow-2xl flex flex-col max-h-[95vh] sm:max-h-[90vh] overflow-hidden border border-border-color transition-colors" onClick={e => e.stopPropagation()}>
                 {/* Header */}
                 <div className="p-8 border-b border-border-color flex justify-between items-center bg-background/50">
                     <div>
-                        <h2 className="text-2xl font-black text-text-main">{visitId ? 'Edytuj Wizytę' : 'Nowa Wizyta'}</h2>
-                        <p className="text-text-muted text-sm font-medium">Uzupełnij szczegóły rezerwacji.</p>
+                        <h2 className="text-xl sm:text-2xl font-black text-text-main">{visitId ? 'Edytuj Wizytę' : 'Nowa Wizyta'}</h2>
+                        <p className="text-text-muted text-xs sm:text-sm font-medium">Uzupełnij szczegóły rezerwacji.</p>
                     </div>
                     <div className="flex gap-2">
-                        {visitId && !isNewClient && (
-                            <button
-                                onClick={handleWhatsAppReminder}
-                                className="p-3 bg-green-500/10 border border-green-500/20 text-green-600 hover:bg-green-500 hover:text-white rounded-2xl transition-all shadow-sm flex items-center gap-2 group"
-                                title="Przypomnienie WhatsApp"
-                            >
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" className="group-hover:animate-bounce">
-                                    <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.771-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217s.231.001.332.005c.109.004.253-.041.397.303.145.348.496 1.215.539 1.302.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86s.289.073.398-.051c.109-.124.462-.536.585-.717.123-.181.246-.152.412-.094.167.058 1.062.5 1.243.593.182.094.303.141.346.215.043.075.043.433-.101.838z" />
-                                </svg>
-                                <span className="text-xs font-black hidden sm:block">Przypomnij</span>
-                            </button>
-                        )}
                         <button onClick={handleClose} className="p-3 bg-surface border border-border-color text-text-muted hover:text-red-500 hover:border-red-100 rounded-2xl transition-all shadow-sm">
                             <X size={20} />
                         </button>
@@ -319,7 +307,18 @@ const VisitModal: React.FC<VisitModalProps> = ({ isOpen, onClose, initialDate, v
                 </div>
 
                 {/* Content */}
-                <div className="overflow-y-auto p-8 space-y-8">
+                <div className="overflow-y-auto p-5 sm:p-8 space-y-6 sm:space-y-8">
+                    {visitId && !isNewClient && (
+                        <button
+                            onClick={handleWhatsAppReminder}
+                            className="w-full p-4 bg-green-500/10 border border-green-500/20 text-green-600 hover:bg-green-500 hover:text-white rounded-2xl transition-all flex items-center justify-center gap-3 active:scale-[0.98]"
+                        >
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.771-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217s.231.001.332.005c.109.004.253-.041.397.303.145.348.496 1.215.539 1.302.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86s.289.073.398-.051c.109-.124.462-.536.585-.717.123-.181.246-.152.412-.094.167.058 1.062.5 1.243.593.182.094.303.141.346.215.043.075.043.433-.101.838z" />
+                            </svg>
+                            <span className="text-sm font-black">Wyślij przypomnienie WhatsApp</span>
+                        </button>
+                    )}
                     {/* Date Section */}
                     <div className="space-y-3">
                         <label className="flex items-center gap-2 text-sm font-bold text-gray-700 uppercase tracking-wider">
@@ -390,7 +389,7 @@ const VisitModal: React.FC<VisitModalProps> = ({ isOpen, onClose, initialDate, v
                         <label className="flex items-center gap-2 text-sm font-bold text-gray-700 uppercase tracking-wider">
                             Usługi
                         </label>
-                        <div className="grid grid-cols-2 gap-3">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             {services?.map(s => (
                                 <button
                                     key={s.id}
@@ -413,23 +412,23 @@ const VisitModal: React.FC<VisitModalProps> = ({ isOpen, onClose, initialDate, v
                     </div>
 
                     {/* Financials Section */}
-                    <div className="grid grid-cols-2 gap-6 bg-background p-6 rounded-3xl border border-border-color transition-colors">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 bg-background p-5 sm:p-6 rounded-3xl border border-border-color transition-colors">
                         <div className="space-y-2">
-                            <label className="text-[10px] font-black text-text-muted uppercase tracking-widest">Cena Finalna (PLN)</label>
+                            <label className="text-[10px] sm:text-[11px] font-black text-text-muted uppercase tracking-widest">Cena Finalna (PLN)</label>
                             <input
                                 type="number"
                                 value={finalPrice}
                                 onChange={e => setFinalPrice(Number(e.target.value))}
-                                className="w-full bg-surface border-2 border-border-color rounded-xl px-4 py-3 text-text-main font-black text-xl focus:border-primary outline-none transition-colors"
+                                className="w-full bg-surface border-2 border-border-color rounded-xl px-4 py-3 text-text-main font-black text-lg sm:text-xl focus:border-primary outline-none transition-colors"
                             />
                         </div>
                         <div className="space-y-2">
-                            <label className="text-[10px] font-black text-text-muted uppercase tracking-widest">Koszt Materiałów (PLN)</label>
+                            <label className="text-[10px] sm:text-[11px] font-black text-text-muted uppercase tracking-widest">Koszt Materiałów (PLN)</label>
                             <input
                                 type="number"
                                 value={materialCost}
                                 onChange={e => setMaterialCost(Number(e.target.value))}
-                                className="w-full bg-surface border-2 border-border-color rounded-xl px-4 py-3 text-red-500 font-black text-xl focus:border-red-200 outline-none transition-colors"
+                                className="w-full bg-surface border-2 border-border-color rounded-xl px-4 py-3 text-red-500 font-black text-lg sm:text-xl focus:border-red-200 outline-none transition-colors"
                             />
                         </div>
                     </div>
@@ -574,7 +573,7 @@ const VisitModal: React.FC<VisitModalProps> = ({ isOpen, onClose, initialDate, v
                             </label>
                         </div>
 
-                        <div className="grid grid-cols-4 gap-4">
+                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                             {photos.map((photo, pIdx) => (
                                 <div key={pIdx} className="relative aspect-square rounded-xl overflow-hidden shadow-sm group border border-gray-100">
                                     <img src={photo} alt={`Przed/Po ${pIdx + 1}`} className="w-full h-full object-cover" />
@@ -598,17 +597,17 @@ const VisitModal: React.FC<VisitModalProps> = ({ isOpen, onClose, initialDate, v
                 </div>
 
                 {/* Footer */}
-                <div className="p-8 border-t border-border-color bg-background/50 flex gap-4 transition-colors">
+                <div className="p-5 sm:p-8 border-t border-border-color bg-background/50 flex flex-col sm:flex-row gap-3 sm:gap-4 transition-colors">
                     <button
                         type="button"
                         onClick={handleClose}
-                        className="flex-1 py-4 px-6 rounded-2xl text-text-muted font-bold hover:bg-background transition-all border border-border-color"
+                        className="w-full sm:flex-1 py-4 px-6 rounded-2xl text-text-muted font-bold hover:bg-background transition-all border border-border-color order-2 sm:order-1"
                     >
                         Anuluj
                     </button>
                     <button
                         onClick={handleSubmit}
-                        className="flex-[2] bg-primary hover:bg-primary-hover text-white py-4 px-6 rounded-2xl shadow-xl shadow-primary/30 font-black text-lg transition-all hover:-translate-y-1 active:translate-y-0"
+                        className="w-full sm:flex-[2] bg-primary hover:bg-primary-hover text-white py-4 px-6 rounded-2xl shadow-xl shadow-primary/30 font-black text-lg transition-all active:scale-[0.98] order-1 sm:order-2"
                     >
                         {visitId ? 'Zapisz Zmiany' : 'Zapisz Wizytę'}
                     </button>

@@ -113,24 +113,22 @@ const ExpensesPage: React.FC = () => {
     }, [expenses]);
 
     return (
-        <div className="h-full flex flex-col p-8 space-y-8 pb-32 overflow-y-auto scrollbar-hide">
-            <div className="flex justify-between items-center">
-                <div>
-                    <h1 className="text-2xl font-black text-gray-900 flex items-center gap-3">
-                        <ShoppingBag className="text-primary" /> Wydatki Salonu
-                    </h1>
-                    <p className="text-gray-400 text-sm font-medium">Zarządzaj kosztami stałymi i operacyjnymi.</p>
-                </div>
+        <div className="h-full flex flex-col p-4 sm:p-8 space-y-6 sm:space-y-8 pb-32 overflow-y-auto scrollbar-hide">
+            <div className="w-full">
+                <h1 className="text-xl sm:text-2xl font-black text-gray-900 flex items-center gap-3">
+                    <ShoppingBag className="text-primary" /> Wydatki Salonu
+                </h1>
+                <p className="text-gray-400 text-xs sm:text-sm font-medium">Zarządzaj kosztami stałymi i operacyjnymi.</p>
             </div>
 
             {/* Expenses Dashboard */}
             <div className="flex flex-col gap-6">
-                <div className="flex justify-between items-center bg-surface p-4 rounded-2xl border border-border-color shadow-sm transition-colors">
-                    <h3 className="text-sm font-black text-text-main uppercase tracking-wider">Statystyki za okres:</h3>
+                <div className="flex flex-col sm:flex-row justify-between sm:items-center bg-surface p-4 rounded-2xl border border-border-color shadow-sm transition-colors gap-4">
+                    <h3 className="text-xs sm:text-sm font-black text-text-main uppercase tracking-wider">Statystyki za okres:</h3>
                     <select
                         value={dashboardMonth}
                         onChange={e => setDashboardMonth(e.target.value)}
-                        className="bg-background border-2 border-border-color rounded-xl px-4 py-2 font-bold text-text-main outline-none focus:border-primary transition-all"
+                        className="w-full sm:w-auto bg-background border-2 border-border-color rounded-xl px-4 py-2 font-bold text-text-main outline-none focus:border-primary transition-all"
                     >
                         {Array.from({ length: 12 }).map((_, i) => {
                             const d = new Date(2026, i, 1);
@@ -140,17 +138,17 @@ const ExpensesPage: React.FC = () => {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div className="bg-surface p-6 rounded-3xl border border-border-color shadow-xl shadow-gray-200/50 dark:shadow-none transition-colors">
+                    <div className="bg-surface p-5 sm:p-6 rounded-3xl border border-border-color shadow-xl shadow-gray-200/50 dark:shadow-none transition-colors">
                         <div className="text-[10px] font-black uppercase text-text-muted tracking-widest mb-1">Total w wybranym miesiącu</div>
-                        <div className="text-3xl font-black text-text-main">{stats?.total || 0} <span className="text-sm font-bold text-text-muted">PLN</span></div>
+                        <div className="text-2xl sm:text-3xl font-black text-text-main">{stats?.total || 0} <span className="text-xs sm:text-sm font-bold text-text-muted">PLN</span></div>
                     </div>
-                    <div className="bg-blue-50 dark:bg-blue-900/10 p-6 rounded-3xl border border-blue-100 dark:border-blue-900/30 transition-colors">
-                        <div className="text-[10px] font-black uppercase text-blue-400 dark:text-blue-300 tracking-widest mb-1">Koszty Stałe (Cykliczne)</div>
-                        <div className="text-3xl font-black text-blue-600 dark:text-blue-400">{stats?.fixed || 0} <span className="text-sm font-bold text-blue-400 dark:text-blue-500">PLN</span></div>
+                    <div className="bg-blue-50 dark:bg-blue-900/10 p-5 sm:p-6 rounded-3xl border border-blue-100 dark:border-blue-900/30 transition-colors">
+                        <div className="text-[10px] font-black uppercase text-blue-400 dark:text-blue-300 tracking-widest mb-1">Koszty Stałe</div>
+                        <div className="text-2xl sm:text-3xl font-black text-blue-600 dark:text-blue-400">{stats?.fixed || 0} <span className="text-xs sm:text-sm font-bold text-blue-400 dark:text-blue-500">PLN</span></div>
                     </div>
-                    <div className="bg-rose-50 dark:bg-rose-900/10 p-6 rounded-3xl border border-rose-100 dark:border-rose-900/30 transition-colors">
-                        <div className="text-[10px] font-black uppercase text-rose-400 dark:text-rose-300 tracking-widest mb-1">Koszty Zmienne (Jednorazowe)</div>
-                        <div className="text-3xl font-black text-rose-600 dark:text-rose-400">{stats?.variable || 0} <span className="text-sm font-bold text-rose-400 dark:text-rose-500">PLN</span></div>
+                    <div className="bg-rose-50 dark:bg-rose-900/10 p-5 sm:p-6 rounded-3xl border border-rose-100 dark:border-rose-900/30 transition-colors">
+                        <div className="text-[10px] font-black uppercase text-rose-400 dark:text-rose-300 tracking-widest mb-1">Koszty Zmienne</div>
+                        <div className="text-2xl sm:text-3xl font-black text-rose-600 dark:text-rose-400">{stats?.variable || 0} <span className="text-xs sm:text-sm font-bold text-rose-400 dark:text-rose-500">PLN</span></div>
                     </div>
                 </div>
             </div>
@@ -158,7 +156,7 @@ const ExpensesPage: React.FC = () => {
             <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
                 {/* Form Col */}
                 <div className="xl:col-span-1">
-                    <form onSubmit={handleAdd} className="bg-surface p-8 rounded-3xl border border-border-color shadow-xl shadow-gray-200/50 dark:shadow-none space-y-6 sticky top-0 transition-colors">
+                    <form onSubmit={handleAdd} className="bg-surface p-5 sm:p-8 rounded-3xl border border-border-color shadow-xl shadow-gray-200/50 dark:shadow-none space-y-6 xl:sticky xl:top-0 transition-colors">
                         <div className="flex justify-between items-center mb-4">
                             <h3 className="text-lg font-black text-text-main">{editingId ? 'Edytuj Wydatek' : 'Dodaj Nowy Wydatek'}</h3>
                             {editingId && (
@@ -246,11 +244,11 @@ const ExpensesPage: React.FC = () => {
 
                 {/* List Col */}
                 <div className="xl:col-span-2 space-y-4">
-                    <div className="flex justify-end mb-4">
+                    <div className="flex justify-start sm:justify-end mb-4">
                         <select
                             value={typeFilter}
                             onChange={e => setTypeFilter(e.target.value as any)}
-                            className="bg-surface border-2 border-border-color rounded-xl px-4 py-2 text-xs font-black uppercase tracking-widest text-text-main outline-none focus:border-primary transition-all shadow-sm"
+                            className="bg-surface border-2 border-border-color rounded-xl px-4 py-3 text-[10px] sm:text-xs font-black uppercase tracking-widest text-text-main outline-none focus:border-primary transition-all shadow-sm w-full sm:w-auto"
                         >
                             <option value="all">Wszystkie wydatki</option>
                             <option value="recurring">Tylko Cykliczne</option>
@@ -283,28 +281,28 @@ const ExpensesPage: React.FC = () => {
                                 return true;
                             })
                             .map(exp => (
-                                <div key={exp.id} className="bg-surface p-6 rounded-3xl border border-border-color shadow-xl shadow-gray-200/50 dark:shadow-none flex flex-col md:flex-row justify-between items-center gap-6 group hover:border-red-100 dark:hover:border-red-900 transition-all">
-                                    <div className="flex items-center gap-6 w-full">
-                                        <div className="bg-rose-50 dark:bg-rose-900/20 p-4 rounded-2xl text-rose-500 shadow-sm border border-rose-100 dark:border-rose-900/30 transition-colors">
+                                <div key={exp.id} className="bg-surface p-5 sm:p-6 rounded-3xl border border-border-color shadow-xl shadow-gray-200/50 dark:shadow-none flex flex-col md:flex-row justify-between items-start md:items-center gap-4 md:gap-6 group hover:border-red-100 dark:hover:border-red-900 transition-all">
+                                    <div className="flex items-center gap-4 sm:gap-6 w-full">
+                                        <div className="bg-rose-50 dark:bg-rose-900/20 p-4 rounded-2xl text-rose-500 shadow-sm border border-rose-100 dark:border-rose-900/30 transition-colors flex-none">
                                             <Filter size={24} />
                                         </div>
-                                        <div className="flex-1">
-                                            <div className="flex items-center gap-2 mb-1">
-                                                <span className="text-[10px] font-black uppercase tracking-widest text-rose-400 bg-rose-50 dark:bg-rose-900/40 px-2 py-0.5 rounded-md">{exp.category}</span>
+                                        <div className="flex-1 min-w-0">
+                                            <div className="flex flex-wrap items-center gap-2 mb-1">
+                                                <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-rose-400 bg-rose-50 dark:bg-rose-900/40 px-2 py-0.5 rounded-md">{exp.category}</span>
                                                 {exp.isRecurring && (
-                                                    <span className="text-[10px] font-black uppercase tracking-widest text-blue-500 bg-blue-50 dark:bg-blue-900/40 px-2 py-0.5 rounded-md flex items-center gap-1">
+                                                    <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-blue-500 bg-blue-50 dark:bg-blue-900/40 px-2 py-0.5 rounded-md flex items-center gap-1">
                                                         <Calendar size={10} /> Cykliczny
                                                     </span>
                                                 )}
-                                                <span className="text-xs font-bold text-text-muted uppercase tracking-widest flex items-center gap-1">
+                                                <span className="text-[10px] sm:text-xs font-bold text-text-muted uppercase tracking-widest flex items-center gap-1">
                                                     <Calendar size={12} /> {format(exp.date, 'dd.MM.yyyy')}
                                                 </span>
                                             </div>
-                                            <div className="text-lg font-black text-text-main">{exp.description}</div>
+                                            <div className="text-base sm:text-lg font-black text-text-main truncate">{exp.description}</div>
                                         </div>
                                     </div>
-                                    <div className="flex items-center gap-6 w-full md:w-auto justify-between md:justify-end">
-                                        <div className="text-2xl font-black text-rose-600 dark:text-rose-400">-{exp.amount} PLN</div>
+                                    <div className="flex items-center gap-6 w-full md:w-auto justify-between md:justify-end border-t md:border-t-0 border-gray-50 pt-3 md:pt-0">
+                                        <div className="text-xl sm:text-2xl font-black text-rose-600 dark:text-rose-400">-{exp.amount} <span className="text-xs sm:text-sm">PLN</span></div>
                                         <div className="flex gap-2">
                                             <button
                                                 onClick={() => handleEdit(exp)}

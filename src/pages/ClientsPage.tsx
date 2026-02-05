@@ -1,13 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import type { Client } from '../types';
-import { Search, UserPlus, Phone, DollarSign, Calendar as CalendarIcon, FileText, Info, Upload, Download } from 'lucide-react';
+import { Search, UserPlus, Phone, DollarSign, Calendar as CalendarIcon, FileText, Info, Upload, Download, ArrowLeft } from 'lucide-react';
 import { format } from 'date-fns';
 import { pl } from 'date-fns/locale';
 import { ensureDate } from '../utils';
 
 import { useSupabaseData } from '../hooks/useSupabaseData';
 import { supabase } from '../lib/supabase';
+import { clsx, type ClassValue } from 'clsx';
+import { twMerge } from 'tailwind-merge';
+
+const cn = (...inputs: ClassValue[]) => twMerge(clsx(inputs));
 
 const ClientsPage: React.FC = () => {
     const { data: clients } = useSupabaseData<Client>('clients');
@@ -88,6 +92,8 @@ const ClientsPage: React.FC = () => {
         setEditPhone(client.phone);
         setEditNotes(client.notes);
         setIsEditing(false);
+        // On mobile, scroll to top when opening profile
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
     // Calculate LTV & History
@@ -168,10 +174,13 @@ const ClientsPage: React.FC = () => {
     };
 
     return (
-        <div className="h-full flex gap-8 p-8">
+        <div className="min-h-full flex flex-col lg:flex-row gap-0 lg:gap-8 p-0 lg:p-8">
             {/* Left: Client List */}
-            <div className={`flex-1 flex flex-col bg-white rounded-3xl border border-gray-100 shadow-xl shadow-gray-200/50 overflow-hidden ${selectedClient ? 'hidden xl:flex' : 'flex'}`}>
-                <div className="p-6 border-b border-gray-100 flex flex-col gap-6 bg-gray-50/50">
+            <div className={cn(
+                "flex-1 flex flex-col bg-white lg:rounded-3xl border-b lg:border border-gray-100 shadow-xl shadow-gray-200/50 lg:overflow-hidden pb-20 lg:pb-0",
+                (selectedClient || isEditing) ? "hidden lg:flex" : "flex min-h-[500px]"
+            )}>
+                <div className="p-4 sm:p-6 border-b border-gray-100 flex flex-col gap-4 sm:gap-6 bg-gray-50/50">
                     <div className="flex justify-between items-center">
                         <div>
                             <h2 className="text-xl font-black text-gray-900">Baza Klientów</h2>
@@ -242,24 +251,39 @@ const ClientsPage: React.FC = () => {
             </div>
 
             {/* Right: Client Profile / Edit Form */}
-            <div className={`flex-[2] bg-white rounded-3xl border border-gray-100 shadow-2xl shadow-gray-200/50 overflow-hidden flex flex-col ${!selectedClient && !isEditing ? 'hidden xl:flex opacity-30' : 'flex'}`}>
+            <div className={cn(
+                "flex-[2] bg-white lg:rounded-3xl lg:border border-gray-100 shadow-2xl shadow-gray-200/50 lg:overflow-hidden flex flex-col pb-20 lg:pb-0",
+                (!selectedClient && !isEditing) ? "hidden lg:flex opacity-30" : "flex min-h-[500px]"
+            )}>
                 {(isEditing || selectedClient) ? (
                     <div className="h-full flex flex-col">
-                        <div className="p-8 border-b border-gray-100 bg-gray-50/50 flex justify-between items-center">
-                            <div>
-                                <h1 className="text-2xl font-black text-gray-900">
-                                    {isEditing ? (selectedClient ? 'Edycja Klienta' : 'Nowy Klient') : selectedClient?.name}
-                                </h1>
-                                <p className="text-gray-400 text-sm font-medium">Informacje szczegółowe i historia wizyt.</p>
+                        <div className="p-4 sm:p-8 border-b border-gray-100 bg-gray-50/50 flex justify-between items-center gap-4">
+                            <div className="flex items-center gap-4">
+                                <button
+                                    onClick={() => {
+                                        if (isEditing && selectedClient) setIsEditing(false);
+                                        else setSelectedClient(null);
+                                        setIsEditing(false);
+                                    }}
+                                    className="lg:hidden p-2 hover:bg-gray-100 rounded-xl transition-colors text-gray-400 hover:text-gray-900"
+                                >
+                                    <ArrowLeft size={24} />
+                                </button>
+                                <div>
+                                    <h1 className="text-xl sm:text-2xl font-black text-gray-900 leading-tight">
+                                        {isEditing ? (selectedClient ? 'Edycja Klienta' : 'Nowy Klient') : selectedClient?.name}
+                                    </h1>
+                                    <p className="text-gray-400 text-[10px] sm:text-sm font-medium">Informacje szczegółowe i historia wizyt.</p>
+                                </div>
                             </div>
-                            <div className="flex gap-2">
+                            <div className="flex gap-1 sm:gap-2">
                                 {!isEditing && (
-                                    <button onClick={() => setIsEditing(true)} className="px-5 py-2.5 rounded-xl border border-gray-200 font-bold text-gray-600 hover:bg-gray-100 transition-all text-sm">
+                                    <button onClick={() => setIsEditing(true)} className="px-3 sm:px-5 py-2 sm:py-2.5 rounded-xl border border-gray-200 font-bold text-gray-600 hover:bg-gray-100 transition-all text-xs sm:text-sm whitespace-nowrap">
                                         Edytuj Profil
                                     </button>
                                 )}
                                 {isEditing && (
-                                    <button onClick={() => { setIsEditing(false); if (!selectedClient?.id) setSelectedClient(null); }} className="px-5 py-2.5 rounded-xl text-gray-400 font-bold hover:text-red-500 transition-all text-sm">
+                                    <button onClick={() => { setIsEditing(false); if (!selectedClient?.id) setSelectedClient(null); }} className="px-3 sm:px-5 py-2 sm:py-2.5 rounded-xl text-gray-400 font-bold hover:text-red-500 transition-all text-xs sm:text-sm whitespace-nowrap">
                                         Anuluj
                                     </button>
                                 )}
@@ -305,32 +329,32 @@ const ClientsPage: React.FC = () => {
                                         className="w-full bg-gray-50 border-2 border-gray-100 rounded-2xl px-5 py-4 text-gray-900 font-medium focus:border-primary focus:bg-white outline-none transition-all resize-none"
                                     />
                                 </div>
-                                <button onClick={handleSaveClient} className="bg-primary hover:bg-primary-hover text-white py-4 px-10 rounded-2xl shadow-xl shadow-primary/20 font-black text-lg transition-all hover:-translate-y-1 active:translate-y-0">
+                                <button onClick={handleSaveClient} className="w-full sm:w-auto bg-primary hover:bg-primary-hover text-white py-4 px-10 rounded-2xl shadow-xl shadow-primary/20 font-black text-lg transition-all hover:-translate-y-1 active:translate-y-0">
                                     Zapisz Profil
                                 </button>
                             </div>
                         ) : (
                             selectedClient && (
-                                <div className="flex-1 overflow-y-auto p-8 space-y-10 scrollbar-hide font-sans">
+                                <div className="flex-1 overflow-y-auto p-4 sm:p-8 space-y-8 sm:space-y-10 scrollbar-hide font-sans">
                                     {/* Stats Grid */}
                                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                                        <div className="bg-gray-50 p-6 rounded-3xl border border-gray-100 shadow-sm">
-                                            <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">LTV (Suma wydana)</div>
-                                            <div className="text-3xl text-gray-900 font-black flex items-center gap-1">
-                                                <DollarSign size={24} className="text-primary" /> {ltv} <span className="text-sm font-bold text-gray-400">PLN</span>
+                                        <div className="bg-gray-50 p-4 sm:p-6 rounded-3xl border border-gray-100 shadow-sm">
+                                            <div className="text-[9px] sm:text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">LTV (Suma wydana)</div>
+                                            <div className="text-2xl sm:text-3xl text-gray-900 font-black flex items-center gap-1">
+                                                <DollarSign className="text-primary w-5 h-5 sm:w-[24px] sm:h-[24px]" /> {ltv} <span className="text-xs sm:text-sm font-bold text-gray-400">PLN</span>
                                             </div>
                                         </div>
-                                        <div className="bg-gray-50 p-6 rounded-3xl border border-gray-100 shadow-sm">
-                                            <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Ostatnia wizyta</div>
-                                            <div className="text-2xl text-gray-900 font-black flex items-center gap-2">
-                                                <CalendarIcon size={20} className="text-blue-500" />
+                                        <div className="bg-gray-50 p-4 sm:p-6 rounded-3xl border border-gray-100 shadow-sm">
+                                            <div className="text-[9px] sm:text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Ostatnia wizyta</div>
+                                            <div className="text-xl sm:text-2xl text-gray-900 font-black flex items-center gap-2">
+                                                <CalendarIcon className="text-blue-500 w-4.5 h-4.5 sm:w-[20px] sm:h-[20px]" />
                                                 {selectedClient.lastVisit ? format(ensureDate(selectedClient.lastVisit), 'dd.MM.yyyy') : <span className="text-gray-300">Brak</span>}
                                             </div>
                                         </div>
-                                        <div className="bg-gray-50 p-6 rounded-3xl border border-gray-100 shadow-sm">
-                                            <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Kontakt</div>
-                                            <div className="text-xl text-gray-900 font-black flex items-center gap-2">
-                                                <Phone size={20} className="text-green-500" />
+                                        <div className="bg-gray-50 p-4 sm:p-6 rounded-3xl border border-gray-100 shadow-sm">
+                                            <div className="text-[9px] sm:text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Kontakt</div>
+                                            <div className="text-lg sm:text-xl text-gray-900 font-black flex items-center gap-2">
+                                                <Phone className="text-green-500 w-4.5 h-4.5 sm:w-[20px] sm:h-[20px]" />
                                                 {selectedClient.phone}
                                             </div>
                                         </div>
@@ -377,8 +401,8 @@ const ClientsPage: React.FC = () => {
                                                                 </div>
                                                             </div>
                                                             <div className="text-right">
-                                                                <div className="text-gray-900 font-black text-lg">{visit.finalPrice || visit.final_price || 0} PLN</div>
-                                                                <div className="text-[10px] text-red-400 font-bold uppercase tracking-widest">Koszt: {visit.materialCost || visit.material_cost || 0} PLN</div>
+                                                                <div className="text-gray-900 font-black text-base sm:text-lg">{visit.finalPrice || visit.final_price || 0} PLN</div>
+                                                                <div className="text-[8px] sm:text-[10px] text-red-400 font-bold uppercase tracking-widest">Koszt: {visit.materialCost || visit.material_cost || 0} PLN</div>
                                                             </div>
                                                         </div>
                                                     )

@@ -90,11 +90,11 @@ const ServicesPage: React.FC = () => {
     const filteredServices = services?.filter(s => s.name.toLowerCase().includes(search.toLowerCase()));
 
     return (
-        <div className="h-full overflow-y-auto p-8 space-y-8 max-w-5xl mx-auto">
+        <div className="h-full overflow-y-auto p-4 sm:p-8 space-y-6 sm:space-y-8 max-w-5xl mx-auto scrollbar-hide">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-gray-200 pb-6">
                 <div>
-                    <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Cennik Usług</h1>
-                    <p className="text-gray-500 mt-1">Zarządzaj ofertą swojego salonu.</p>
+                    <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight">Cennik Usług</h1>
+                    <p className="text-gray-500 text-sm mt-1">Zarządzaj ofertą swojego salonu.</p>
                 </div>
 
                 <div className="flex gap-3 w-full md:w-auto">
@@ -118,8 +118,8 @@ const ServicesPage: React.FC = () => {
 
             {/* Modal / Form */}
             {isEditing && (
-                <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 backdrop-blur-sm p-4">
-                    <div className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-lg border border-gray-100 animate-in fade-in zoom-in-95 duration-200">
+                <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 backdrop-blur-sm p-4" onClick={resetForm}>
+                    <div className="bg-white rounded-2xl shadow-2xl p-6 sm:p-8 w-full max-w-lg border border-gray-100 animate-in fade-in zoom-in-95 duration-200" onClick={e => e.stopPropagation()}>
                         <h2 className="text-2xl font-bold mb-6 text-gray-900">{editId ? 'Edytuj Usługę' : 'Nowa Usługa'}</h2>
                         <form onSubmit={handleSubmit} className="space-y-5">
                             <div>
@@ -157,7 +157,7 @@ const ServicesPage: React.FC = () => {
                                 <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Ten kolor będzie widoczny na kafelku wizyty w kalendarzu.</p>
                             </div>
 
-                            <div className="grid grid-cols-2 gap-5">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                                 <div>
                                     <label className="block text-sm font-semibold text-gray-700 mb-2">Cena (PLN)</label>
                                     <div className="relative">
@@ -193,7 +193,7 @@ const ServicesPage: React.FC = () => {
             )}
 
             {/* Card Grid view for mobile, Table for desktop - sticking to Table for now but styled better */}
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 table-container">
                 <table className="w-full text-left border-collapse">
                     <thead>
                         <tr className="bg-gray-50/50 border-b border-gray-200">
@@ -213,13 +213,15 @@ const ServicesPage: React.FC = () => {
                                     </div>
                                 </td>
                                 <td className="px-8 py-5 text-gray-900 font-bold">{(service as any).default_price || service.defaultPrice} PLN</td>
-                                <td className="px-8 py-5 text-right flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                    <button onClick={() => handleEdit(service)} className="p-2 text-gray-400 hover:text-primary hover:bg-primary/10 rounded-lg transition-colors" title="Edytuj">
-                                        <Edit2 size={18} />
-                                    </button>
-                                    <button onClick={() => handleDelete(service.id!)} className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors" title="Usuń">
-                                        <Trash2 size={18} />
-                                    </button>
+                                <td className="px-8 py-5 text-right">
+                                    <div className="flex justify-end gap-2 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity">
+                                        <button onClick={() => handleEdit(service)} className="p-2 text-gray-400 hover:text-primary hover:bg-primary/10 rounded-lg transition-colors" title="Edytuj">
+                                            <Edit2 size={18} />
+                                        </button>
+                                        <button onClick={() => handleDelete(service.id!)} className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors" title="Usuń">
+                                            <Trash2 size={18} />
+                                        </button>
+                                    </div>
                                 </td>
                             </tr>
                         ))}

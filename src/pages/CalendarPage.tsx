@@ -7,7 +7,7 @@ import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { useSupabaseData } from '../hooks/useSupabaseData';
 import VisitModal from '../components/VisitModal';
 import { ensureDate } from '../utils';
-import { ChevronLeft, ChevronRight, Calendar as CalendarIcon } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Calendar as CalendarIcon, Plus } from 'lucide-react';
 
 const locales = { 'pl': pl };
 const localizer = dateFnsLocalizer({ format, parse, startOfWeek, getDay, locales });
@@ -38,46 +38,48 @@ const CustomToolbar = (props: any) => {
     const years = [2025, 2026, 2027];
 
     return (
-        <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-4 bg-gray-50 p-4 rounded-xl border border-gray-200">
-            <div className="flex items-center gap-2">
+        <div className="flex flex-col lg:flex-row justify-between items-center gap-4 mb-4 bg-gray-50 p-3 sm:p-4 rounded-2xl border border-gray-200">
+            <div className="flex items-center gap-2 w-full lg:w-auto overflow-x-auto pb-2 lg:pb-0 scrollbar-hide">
                 <button
                     onClick={() => navigate(Navigate.PREVIOUS)}
-                    className="p-2 hover:bg-white rounded-lg border border-gray-200 transition-colors flex items-center gap-1 text-sm font-medium text-gray-600 shadow-sm"
+                    className="flex-none p-2 hover:bg-white rounded-lg border border-gray-200 transition-colors flex items-center justify-center text-gray-600 shadow-sm"
+                    title="Poprzedni"
                 >
-                    <ChevronLeft size={16} /> Poprzedni Miesiąc
+                    <ChevronLeft size={18} />
                 </button>
                 <button
                     onClick={() => navigate(Navigate.TODAY)}
-                    className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-hover transition-colors text-sm font-bold shadow-sm"
+                    className="flex-1 lg:flex-none px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-hover transition-colors text-xs sm:text-sm font-bold shadow-sm whitespace-nowrap"
                 >
-                    Obecny Miesiąc
+                    Dzisiaj
                 </button>
                 <button
                     onClick={() => navigate(Navigate.NEXT)}
-                    className="p-2 hover:bg-white rounded-lg border border-gray-200 transition-colors flex items-center gap-1 text-sm font-medium text-gray-600 shadow-sm"
+                    className="flex-none p-2 hover:bg-white rounded-lg border border-gray-200 transition-colors flex items-center justify-center text-gray-600 shadow-sm"
+                    title="Następny"
                 >
-                    Następny Miesiąc <ChevronRight size={16} />
+                    <ChevronRight size={18} />
                 </button>
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 w-full sm:w-auto">
                 <select
                     value={date.getMonth()}
                     onChange={(e) => jumpToMonth(parseInt(e.target.value))}
-                    className="bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary/20 transition-all font-medium"
+                    className="flex-1 sm:flex-none bg-white border border-gray-200 rounded-lg px-2 py-2 text-xs sm:text-sm outline-none focus:ring-2 focus:ring-primary/20 transition-all font-bold text-gray-700"
                 >
                     {months.map((m, i) => <option key={i} value={i}>{m}</option>)}
                 </select>
                 <select
                     value={currentYear}
                     onChange={(e) => jumpToYear(parseInt(e.target.value))}
-                    className="bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary/20 transition-all font-medium"
+                    className="flex-1 sm:flex-none bg-white border border-gray-200 rounded-lg px-2 py-2 text-xs sm:text-sm outline-none focus:ring-2 focus:ring-primary/20 transition-all font-bold text-gray-700"
                 >
                     {years.map(y => <option key={y} value={y}>{y}</option>)}
                 </select>
             </div>
 
-            <div className="flex bg-gray-200 p-1 rounded-lg">
+            <div className="flex bg-gray-200 p-1 rounded-xl w-full sm:w-auto">
                 {[
                     { id: Views.MONTH, label: 'Miesiąc' },
                     { id: Views.WEEK, label: 'Tydzień' },
@@ -86,7 +88,7 @@ const CustomToolbar = (props: any) => {
                     <button
                         key={v.id}
                         onClick={() => onView(v.id)}
-                        className={`px-4 py-1.5 rounded-md text-xs font-bold transition-all ${view === v.id ? 'bg-white text-primary shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+                        className={`flex-1 sm:flex-none px-4 py-1.5 rounded-lg text-[10px] sm:text-xs font-black uppercase tracking-tight transition-all ${view === v.id ? 'bg-white text-primary shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
                     >
                         {v.label}
                     </button>
@@ -173,39 +175,45 @@ const CalendarPage: React.FC = () => {
     }, []);
 
     return (
-        <div className="h-full flex flex-col space-y-4 p-6">
-            <div className="flex justify-between items-center">
+        <div className="h-full flex flex-col space-y-4 p-4 sm:p-6 pb-20 sm:pb-6">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
-                    <h1 className="text-2xl font-black text-gray-900 flex items-center gap-3">
+                    <h1 className="text-xl sm:text-2xl font-black text-gray-900 flex items-center gap-3">
                         <CalendarIcon className="text-primary" /> Kalendarz Wizyt
                     </h1>
-                    <p className="text-gray-400 text-sm">Zarządzaj rezerwacjami i czasem pracy.</p>
+                    <p className="text-gray-400 text-xs sm:text-sm">Zarządzaj rezerwacjami i czasem pracy.</p>
                 </div>
                 <button
                     onClick={() => { setEditingVisitId(undefined); setIsModalOpen(true); }}
-                    className="bg-primary hover:bg-primary-hover text-white px-6 py-2.5 rounded-xl shadow-lg shadow-primary/20 transition-all font-bold flex items-center gap-2 hover:-translate-y-0.5 active:translate-y-0"
+                    className="w-full sm:w-auto bg-primary hover:bg-primary-hover text-white px-6 py-3 rounded-2xl shadow-lg shadow-primary/20 transition-all font-black flex items-center justify-center gap-2 active:scale-95 text-sm sm:text-base"
                 >
-                    <span>+ Nowa Wizyta</span>
+                    <Plus size={20} /> Nowa Wizyta
                 </button>
             </div>
 
             <div className="flex-1 bg-white p-4 rounded-2xl shadow-xl shadow-gray-200/50 border border-gray-100 text-gray-800 flex flex-col min-h-0">
                 <style>{`
                     .rbc-calendar { font-family: 'Inter', sans-serif; }
-                    .rbc-header { padding: 12px; font-weight: 700; color: #6b7280; text-transform: uppercase; font-size: 11px; letter-spacing: 0.05em; border-bottom: 2px solid #f3f4f6; }
+                    .rbc-header { padding: 8px sm:12px; font-weight: 700; color: #6b7280; text-transform: uppercase; font-size: 10px sm:11px; letter-spacing: 0.05em; border-bottom: 2px solid #f3f4f6; }
                     .rbc-month-view { border: none !important; }
                     .rbc-day-bg { border-left: 1px solid #f3f4f6 !important; transition: background 0.2s; }
                     .rbc-day-bg:hover { background-color: #f9fafb; cursor: pointer; }
                     .rbc-month-row { border-bottom: 1px solid #f3f4f6 !important; }
                     .rbc-today { background-color: #f5f3ff !important; }
                     .rbc-off-range-bg { background-color: #fafafa !important; color: #d1d5db; }
-                    .rbc-event { transition: transform 0.1s; }
+                    .rbc-event { transition: transform 0.1s; border-radius: 8px !important; }
                     .rbc-event:hover { transform: scale(1.02); z-index: 50; }
                     .rbc-time-view { border: none; border-top: 1px solid #f3f4f6; flex: 1; display: flex; flex-direction: column; min-h-0; }
                     .rbc-time-header { border-bottom: 2px solid #f3f4f6; }
                     .rbc-time-content { border-top: none; overflow-y: auto !important; }
                     .rbc-timeslot-group { border-bottom: 1px solid #f3f4f6; min-height: 50px; }
                     .rbc-selected-cell { background-color: #e0e7ff !important; }
+                    .rbc-show-more { font-size: 9px; font-weight: 900; color: #7c3aed; background: #f5f3ff; border-radius: 4px; padding: 2px 4px; }
+                    @media (max-width: 640px) {
+                        .rbc-header { padding: 4px; font-size: 9px; }
+                        .rbc-event-content { font-size: 9px; }
+                        .rbc-button-link { font-size: 10px; }
+                    }
                 `}</style>
                 <Calendar
                     localizer={localizer}

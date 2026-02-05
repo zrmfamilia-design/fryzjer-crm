@@ -53,14 +53,14 @@ const DashboardPage: React.FC = () => {
     }, [visits, clients]);
 
     return (
-        <div className="h-full overflow-y-auto p-8 space-y-6">
-            <div className="flex flex-col md:flex-row justify-between items-center gap-6 bg-surface p-6 rounded-3xl shadow-xl shadow-gray-200/50 dark:shadow-none border border-border-color transition-colors">
-                <div className="flex items-center gap-6">
-                    <div className="bg-surface p-2 rounded-2xl shadow-sm border border-border-color hidden sm:block">
-                        <img src={logo} alt="S. Mazurkiewicz" className="h-16 w-auto object-contain" />
+        <div className="min-h-full p-4 sm:p-8 space-y-6 pb-24 sm:pb-8">
+            <div className="flex flex-col md:flex-row justify-between items-center gap-6 bg-surface p-4 sm:p-6 rounded-3xl shadow-xl shadow-gray-200/50 dark:shadow-none border border-border-color transition-colors">
+                <div className="flex items-center gap-4 sm:gap-6 w-full md:w-auto">
+                    <div className="bg-surface p-2 rounded-2xl shadow-sm border border-border-color hidden xs:block">
+                        <img src={logo} alt="S. Mazurkiewicz" className="h-10 sm:h-16 w-auto object-contain" />
                     </div>
-                    <div>
-                        <h1 className="text-2xl font-black text-text-main flex items-center gap-2">
+                    <div className="flex-1">
+                        <h1 className="text-xl sm:text-2xl font-black text-text-main flex items-center gap-2">
                             Witaj SYLWUTKA <span className="text-3xl animate-wave">👋</span>
                         </h1>
                         <p className="text-text-muted text-sm font-medium">Sprawdź co mamy zaplanowane na dzisiaj.</p>
@@ -76,8 +76,8 @@ const DashboardPage: React.FC = () => {
                 <div className="lg:col-span-1 space-y-6">
                     {/* Low Stock Alert */}
                     {lowStockAlerts.length > 0 && (
-                        <div className="bg-red-50 dark:bg-red-900/20 border-2 border-red-100 dark:border-red-900/30 p-5 rounded-2xl animate-pulse shadow-sm">
-                            <h3 className="text-red-700 dark:text-red-400 font-black text-xs uppercase tracking-widest flex items-center gap-2 mb-3">
+                        <div className="bg-red-50 dark:bg-red-900/20 border-2 border-red-100 dark:border-red-900/30 p-4 sm:p-5 rounded-2xl animate-pulse shadow-sm">
+                            <h3 className="text-red-700 dark:text-red-400 font-black text-[10px] sm:text-xs uppercase tracking-widest flex items-center gap-2 mb-3">
                                 <div className="w-2 h-2 bg-red-600 rounded-full"></div>
                                 Uwaga! Kończące się produkty
                             </h3>
@@ -160,11 +160,11 @@ const DashboardPage: React.FC = () => {
 
                 {/* Right Col: Today's Agenda */}
                 <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 flex flex-col overflow-hidden">
-                    <div className="p-6 border-b border-gray-100 flex justify-between items-center">
+                    <div className="p-4 sm:p-6 border-b border-gray-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
                         <h2 className="text-lg font-bold text-gray-800 flex items-center gap-2">
                             <Clock size={20} className="text-primary" /> Plan Dnia
                         </h2>
-                        <span className="text-xs font-medium text-gray-400 uppercase tracking-widest">{format(now, 'EEEE, d MMMM', { locale: pl })}</span>
+                        <span className="text-[10px] sm:text-xs font-medium text-gray-400 uppercase tracking-widest">{format(now, 'EEEE, d MMMM', { locale: pl })}</span>
                     </div>
 
                     <div className="flex-1 overflow-y-auto p-6 scrollbar-hide">
@@ -183,12 +183,12 @@ const DashboardPage: React.FC = () => {
                                 {todaysVisits.map((visit) => (
                                     <div key={visit.id} className="relative flex items-start gap-6 group">
                                         {/* Time Stamp */}
-                                        <div className="flex-none w-14 text-right pt-2 font-bold text-gray-900 text-sm">
+                                        <div className="flex-none w-12 sm:w-14 text-right pt-2 font-bold text-gray-900 text-xs sm:text-sm">
                                             {format(ensureDate(visit.date), 'HH:mm', { locale: pl })}
                                         </div>
 
                                         {/* Timeline Dot */}
-                                        <div className="mt-2.5 z-10 w-4 h-4 rounded-full border-2 border-white bg-primary shadow-sm ring-4 ring-primary/10"></div>
+                                        <div className="mt-2 sm:mt-2.5 z-10 w-3 h-3 sm:w-4 sm:h-4 rounded-full border-2 border-white bg-primary shadow-sm ring-4 ring-primary/10"></div>
 
                                         {/* Card */}
                                         <div className="flex-1 bg-gray-50/50 group-hover:bg-white border border-gray-100 group-hover:border-primary/20 p-4 rounded-xl transition-all group-hover:shadow-lg group-hover:shadow-primary/5 cursor-pointer" onClick={() => navigate('/calendar')}>
