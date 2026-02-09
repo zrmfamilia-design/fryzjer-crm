@@ -11,6 +11,7 @@ const CATEGORIES: ExpenseCategory[] = ['Czynsz', 'Podatki/ZUS', 'Energia/Woda', 
 
 const ExpensesPage: React.FC = () => {
     const { data: expenses } = useSupabaseData<any>('expenses');
+    const { data: visits } = useSupabaseData<any>('visits');
 
     const [amount, setAmount] = useState('');
     const [category, setCategory] = useState<ExpenseCategory>('Inne');
@@ -66,20 +67,35 @@ const ExpensesPage: React.FC = () => {
 
     // Dashboard Stats
     const stats = React.useMemo(() => {
-        if (!expenses) return null;
+        if (!expenses || !visits) return null;
         const [year, month] = dashboardMonth.split('-').map(Number);
         const targetDate = new Date(year, month - 1, 1);
 
         const currentMonthExpenses = expenses.filter(e =>
-            isSameMonth(e.date, targetDate)
+            isSameMonth(ensureDate(e.date), targetDate)
         );
 
-        const total = currentMonthExpenses.reduce((acc, e) => acc + e.amount, 0);
-        const fixed = currentMonthExpenses.filter(e => e.isRecurring).reduce((acc, e) => acc + e.amount, 0);
-        const variable = total - fixed;
+        // Calculate Revenue from Visits
+        const currentMonthVisits = visits.filter(v =>
+            isSameMonth(ensureDate(v.date), targetDate)
+        );
+        const revenue = currentMonthVisits.reduce((sum: number, v: any) => sum + (v.final_price || v.finalPrice || 0), 0);
 
-        return { total, fixed, variable };
-    }, [expenses, dashboardMonth]);
+        // Calculate Material Costs from Visits
+        const materialCosts = currentMonthVisits.reduce((sum: number, v: any) => sum + (v.material_cost || v.materialCost || 0), 0);
+
+        const expensesTotal = currentMonthExpenses.reduce((acc, e) => acc + e.amount, 0);
+        const fixed = currentMonthExpenses.filter(e => e.isRecurring).reduce((acc, e) => acc + e.amount, 0);
+
+        // Variable = Expenses Variable + Material Costs
+        const variableExpenses = expensesTotal - fixed;
+        const totalVariable = variableExpenses + materialCosts;
+
+        const totalCosts = expensesTotal + materialCosts;
+        const realProfit = revenue - totalCosts;
+
+        return { total: totalCosts, fixed, variable: totalVariable, materialCosts, revenue, realProfit };
+    }, [expenses, visits, dashboardMonth]);
 
     // Automation: Seed recurring expenses for current month
     React.useEffect(() => {
@@ -139,16 +155,16 @@ const ExpensesPage: React.FC = () => {
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div className="bg-surface p-5 sm:p-6 rounded-3xl border border-border-color shadow-xl shadow-gray-200/50 dark:shadow-none transition-colors">
-                        <div className="text-[10px] font-black uppercase text-text-muted tracking-widest mb-1">Total w wybranym miesiącu</div>
-                        <div className="text-2xl sm:text-3xl font-black text-text-main">{stats?.total || 0} <span className="text-xs sm:text-sm font-bold text-text-muted">PLN</span></div>
+                        <div className="text-[10px] font-black uppercase text-text-muted tracking-widest mb-1">Przychód (Wizyty)</div>
+                        <div className="text-2xl sm:text-3xl font-black text-green-600">{stats?.revenue || 0} <span className="text-xs sm:text-sm font-bold text-green-400">PLN</span></div>
                     </div>
-                    <div className="bg-blue-50 dark:bg-blue-900/10 p-5 sm:p-6 rounded-3xl border border-blue-100 dark:border-blue-900/30 transition-colors">
-                        <div className="text-[10px] font-black uppercase text-blue-400 dark:text-blue-300 tracking-widest mb-1">Koszty Stałe</div>
-                        <div className="text-2xl sm:text-3xl font-black text-blue-600 dark:text-blue-400">{stats?.fixed || 0} <span className="text-xs sm:text-sm font-bold text-blue-400 dark:text-blue-500">PLN</span></div>
+                    <div className="bg-surface p-5 sm:p-6 rounded-3xl border border-border-color shadow-xl shadow-gray-200/50 dark:shadow-none transition-colors">
+                        <div className="text-[10px] font-black uppercase text-text-muted tracking-widest mb-1">Koszty Całkowite (Wydatki + Materiał)</div>
+                        <div className="text-2xl sm:text-3xl font-black text-red-600">-{stats?.total || 0} <span className="text-xs sm:text-sm font-bold text-red-400">PLN</span></div>
                     </div>
-                    <div className="bg-rose-50 dark:bg-rose-900/10 p-5 sm:p-6 rounded-3xl border border-rose-100 dark:border-rose-900/30 transition-colors">
-                        <div className="text-[10px] font-black uppercase text-rose-400 dark:text-rose-300 tracking-widest mb-1">Koszty Zmienne</div>
-                        <div className="text-2xl sm:text-3xl font-black text-rose-600 dark:text-rose-400">{stats?.variable || 0} <span className="text-xs sm:text-sm font-bold text-rose-400 dark:text-rose-500">PLN</span></div>
+                    <div className={`${(stats?.realProfit || 0) >= 0 ? 'bg-green-50 dark:bg-green-900/10 border-green-100 dark:border-green-900/30' : 'bg-red-50 dark:bg-red-900/10 border-red-100 dark:border-red-900/30'} p-5 sm:p-6 rounded-3xl border transition-colors`}>
+                        <div className={`text-[10px] font-black uppercase tracking-widest mb-1 ${(stats?.realProfit || 0) >= 0 ? 'text-green-600' : 'text-red-600'}`}>Zysk "Na Rękę"</div>
+                        <div className={`text-2xl sm:text-3xl font-black ${(stats?.realProfit || 0) >= 0 ? 'text-green-700' : 'text-red-700'}`}>{stats?.realProfit || 0} <span className={`text-xs sm:text-sm font-bold ${(stats?.realProfit || 0) >= 0 ? 'text-green-500' : 'text-red-500'}`}>PLN</span></div>
                     </div>
                 </div>
             </div>
@@ -282,36 +298,68 @@ const ExpensesPage: React.FC = () => {
                             })
                             .map(exp => (
                                 <div key={exp.id} className="bg-surface p-5 sm:p-6 rounded-3xl border border-border-color shadow-xl shadow-gray-200/50 dark:shadow-none flex flex-col md:flex-row justify-between items-start md:items-center gap-4 md:gap-6 group hover:border-red-100 dark:hover:border-red-900 transition-all">
+                                    {/* ... expense item ... */}
+                                </div>
+                            ))
+                            // Prepend Material Costs
+                            .concat(
+                                (stats?.materialCosts || 0) > 0 && (typeFilter === 'all' || typeFilter === 'one-time') ? [(
+                                    <div key="material-costs" className="bg-surface p-5 sm:p-6 rounded-3xl border border-purple-100 shadow-xl shadow-gray-200/50 dark:shadow-none flex flex-col md:flex-row justify-between items-start md:items-center gap-4 md:gap-6 group hover:border-purple-200 transition-all bg-purple-50/30">
+                                        <div className="flex items-center gap-4 sm:gap-6 w-full">
+                                            <div className="bg-purple-100 dark:bg-purple-900/20 p-4 rounded-2xl text-purple-600 shadow-sm border border-purple-200 dark:border-purple-900/30 transition-colors flex-none">
+                                                <ShoppingBag size={24} />
+                                            </div>
+                                            <div className="flex-1 min-w-0">
+                                                <div className="flex flex-wrap items-center gap-2 mb-1">
+                                                    <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-purple-500 bg-purple-100 dark:bg-purple-900/40 px-2 py-0.5 rounded-md">Produkty</span>
+                                                    <span className="text-[10px] sm:text-xs font-bold text-text-muted uppercase tracking-widest flex items-center gap-1">
+                                                        <Calendar size={12} /> {dashboardMonth}
+                                                    </span>
+                                                </div>
+                                                <div className="text-base sm:text-lg font-black text-text-main truncate">Zużycie Materiałów (z Wizyt)</div>
+                                            </div>
+                                        </div>
+                                        <div className="flex items-center gap-6 w-full md:w-auto justify-between md:justify-end border-t md:border-t-0 border-gray-50 pt-3 md:pt-0">
+                                            <div className="text-xl sm:text-2xl font-black text-purple-600">-{stats?.materialCosts || 0} <span className="text-xs sm:text-sm">PLN</span></div>
+                                            <div className="flex gap-2 opacity-50 cursor-not-allowed" title="To jest koszt automatyczny z wizyt">
+                                                <button disabled className="p-3 bg-background text-gray-300 rounded-xl"><ShoppingBag size={18} /></button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )] : []
+                            )
+                            .map((item, idx) => React.isValidElement(item) ? item : (
+                                <div key={(item as any).id} /* ... existing expense render ... */ className="bg-surface p-5 sm:p-6 rounded-3xl border border-border-color shadow-xl shadow-gray-200/50 dark:shadow-none flex flex-col md:flex-row justify-between items-start md:items-center gap-4 md:gap-6 group hover:border-red-100 dark:hover:border-red-900 transition-all">
                                     <div className="flex items-center gap-4 sm:gap-6 w-full">
                                         <div className="bg-rose-50 dark:bg-rose-900/20 p-4 rounded-2xl text-rose-500 shadow-sm border border-rose-100 dark:border-rose-900/30 transition-colors flex-none">
                                             <Filter size={24} />
                                         </div>
                                         <div className="flex-1 min-w-0">
                                             <div className="flex flex-wrap items-center gap-2 mb-1">
-                                                <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-rose-400 bg-rose-50 dark:bg-rose-900/40 px-2 py-0.5 rounded-md">{exp.category}</span>
-                                                {exp.isRecurring && (
+                                                <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-rose-400 bg-rose-50 dark:bg-rose-900/40 px-2 py-0.5 rounded-md">{(item as any).category}</span>
+                                                {(item as any).isRecurring && (
                                                     <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-blue-500 bg-blue-50 dark:bg-blue-900/40 px-2 py-0.5 rounded-md flex items-center gap-1">
                                                         <Calendar size={10} /> Cykliczny
                                                     </span>
                                                 )}
                                                 <span className="text-[10px] sm:text-xs font-bold text-text-muted uppercase tracking-widest flex items-center gap-1">
-                                                    <Calendar size={12} /> {format(exp.date, 'dd.MM.yyyy')}
+                                                    <Calendar size={12} /> {format((item as any).date, 'dd.MM.yyyy')}
                                                 </span>
                                             </div>
-                                            <div className="text-base sm:text-lg font-black text-text-main truncate">{exp.description}</div>
+                                            <div className="text-base sm:text-lg font-black text-text-main truncate">{(item as any).description}</div>
                                         </div>
                                     </div>
                                     <div className="flex items-center gap-6 w-full md:w-auto justify-between md:justify-end border-t md:border-t-0 border-gray-50 pt-3 md:pt-0">
-                                        <div className="text-xl sm:text-2xl font-black text-rose-600 dark:text-rose-400">-{exp.amount} <span className="text-xs sm:text-sm">PLN</span></div>
+                                        <div className="text-xl sm:text-2xl font-black text-rose-600 dark:text-rose-400">-{(item as any).amount} <span className="text-xs sm:text-sm">PLN</span></div>
                                         <div className="flex gap-2">
                                             <button
-                                                onClick={() => handleEdit(exp)}
+                                                onClick={() => handleEdit(item)}
                                                 className="p-3 bg-background text-text-muted hover:bg-blue-50 dark:hover:bg-blue-900/30 hover:text-blue-500 rounded-xl transition-all"
                                             >
                                                 <ShoppingBag size={18} />
                                             </button>
                                             <button
-                                                onClick={() => handleDelete(exp.id!)}
+                                                onClick={() => handleDelete((item as any).id!)}
                                                 className="p-3 bg-background text-text-muted hover:bg-red-50 dark:hover:bg-red-900/30 hover:text-red-500 rounded-xl transition-all"
                                             >
                                                 <Trash2 size={18} />
