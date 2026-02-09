@@ -222,7 +222,7 @@ const CalendarPage: React.FC = () => {
                     view={currentView}
                     onNavigate={(newDate) => setCurrentDate(newDate)}
                     onView={(newView) => setCurrentView(newView)}
-                    style={{ height: '100%' }}
+                    style={{ height: 'calc(100vh - 240px)', minHeight: '500px' }}
                     culture='pl'
                     eventPropGetter={eventStyleGetter}
                     onSelectSlot={handleSelectSlot}
