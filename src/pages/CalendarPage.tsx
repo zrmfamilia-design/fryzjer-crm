@@ -235,6 +235,8 @@ const CalendarPage: React.FC = () => {
                         noEventsInRange: "Brak wizyt w tym okresie.",
                         allDay: "Cały dzień",
                     }}
+                    min={new Date(0, 0, 0, 7, 0, 0)}
+                    max={new Date(0, 0, 0, 21, 0, 0)}
                 />
             </div>
 
