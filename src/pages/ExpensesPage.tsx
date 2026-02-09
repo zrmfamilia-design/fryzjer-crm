@@ -303,7 +303,7 @@ const ExpensesPage: React.FC = () => {
                             ))
                             // Prepend Material Costs
                             .concat(
-                                (stats?.materialCosts || 0) > 0 && (typeFilter === 'all' || typeFilter === 'one-time') ? [(
+                                (typeFilter === 'all' || typeFilter === 'one-time') ? [(
                                     <div key="material-costs" className="bg-surface p-5 sm:p-6 rounded-3xl border border-purple-100 shadow-xl shadow-gray-200/50 dark:shadow-none flex flex-col md:flex-row justify-between items-start md:items-center gap-4 md:gap-6 group hover:border-purple-200 transition-all bg-purple-50/30">
                                         <div className="flex items-center gap-4 sm:gap-6 w-full">
                                             <div className="bg-purple-100 dark:bg-purple-900/20 p-4 rounded-2xl text-purple-600 shadow-sm border border-purple-200 dark:border-purple-900/30 transition-colors flex-none">
@@ -316,7 +316,7 @@ const ExpensesPage: React.FC = () => {
                                                         <Calendar size={12} /> {dashboardMonth}
                                                     </span>
                                                 </div>
-                                                <div className="text-base sm:text-lg font-black text-text-main truncate">Zużycie Materiałów (z Wizyt)</div>
+                                                <div className="text-base sm:text-lg font-black text-text-main truncate">Zużycie Materiałów (Automatyczne)</div>
                                             </div>
                                         </div>
                                         <div className="flex items-center gap-6 w-full md:w-auto justify-between md:justify-end border-t md:border-t-0 border-gray-50 pt-3 md:pt-0">
