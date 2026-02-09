@@ -45,13 +45,14 @@ const ClientsPage: React.FC = () => {
     ).sort((a, b) => a.name.localeCompare(b.name));
 
     const validatePhone = (phone: string) => {
+        if (!phone) return true; // Allow empty phone
         const regex = /^\+48\d{9}$/;
         return regex.test(phone);
     };
 
     const handleSaveClient = async () => {
         if (!editName) return alert('Imię i nazwisko jest wymagane.');
-        if (!validatePhone(editPhone)) return alert('Numer telefonu musi zaczynać się od +48 i składać się z 9 cyfr po prefiksie.');
+        if (editPhone && !validatePhone(editPhone)) return alert('Numer telefonu musi zaczynać się od +48 i składać się z 9 cyfr po prefiksie.');
 
         if (selectedClient && selectedClient.id) {
             const { error } = await supabase.from('clients').update({

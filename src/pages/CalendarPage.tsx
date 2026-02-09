@@ -43,7 +43,7 @@ const CustomToolbar = (props: any) => {
                 <button
                     onClick={() => navigate(Navigate.PREVIOUS)}
                     className="flex-none p-2 hover:bg-white rounded-lg border border-gray-200 transition-colors flex items-center justify-center text-gray-600 shadow-sm"
-                    title="Poprzedni"
+                    title={view === Views.MONTH ? "Poprzedni miesiąc" : view === Views.WEEK ? "Poprzedni tydzień" : "Poprzedni dzień"}
                 >
                     <ChevronLeft size={18} />
                 </button>
@@ -56,7 +56,7 @@ const CustomToolbar = (props: any) => {
                 <button
                     onClick={() => navigate(Navigate.NEXT)}
                     className="flex-none p-2 hover:bg-white rounded-lg border border-gray-200 transition-colors flex items-center justify-center text-gray-600 shadow-sm"
-                    title="Następny"
+                    title={view === Views.MONTH ? "Następny miesiąc" : view === Views.WEEK ? "Następny tydzień" : "Następny dzień"}
                 >
                     <ChevronRight size={18} />
                 </button>

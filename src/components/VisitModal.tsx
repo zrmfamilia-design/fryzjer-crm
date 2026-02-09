@@ -164,8 +164,37 @@ const VisitModal: React.FC<VisitModalProps> = ({ isOpen, onClose, initialDate, v
     };
 
     const validatePhone = (phone: string) => {
+        if (!phone) return true; // Allow empty
         const regex = /^\+48\d{9}$/;
         return regex.test(phone);
+    };
+
+    const handleDelete = async () => {
+        if (!visitId || !existingVisit) return;
+        if (!confirm('Czy na pewno chcesz usunąć tę wizytę? Tej operacji nie można cofnąć.')) return;
+
+        try {
+            // Restore product stock
+            const oldUsed = existingVisit.used_products || existingVisit.usedProducts || [];
+            for (const oldProd of oldUsed) {
+                const p = products?.find(prod => prod.id === (oldProd.productId || oldProd.product_id));
+                if (p) {
+                    const cur = p.current_stock || p.currentStock || 0;
+                    await supabase.from('products').update({
+                        current_stock: cur + oldProd.amountUsed
+                    }).eq('id', (oldProd.productId || oldProd.product_id));
+                }
+            }
+
+            // Delete visit
+            const { error } = await supabase.from('visits').delete().eq('id', visitId);
+            if (error) throw error;
+
+            handleClose();
+        } catch (err: any) {
+            console.error(err);
+            alert(`Błąd usuwania: ${err.message}`);
+        }
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -180,7 +209,7 @@ const VisitModal: React.FC<VisitModalProps> = ({ isOpen, onClose, initialDate, v
 
             if (isNewClient) {
                 if (!newClientName) return alert('Podaj imię klienta');
-                if (!validatePhone(newClientPhone)) return alert('Numer telefonu musi zaczynać się od +48 i zawierać 9 cyfr.');
+                if (newClientPhone && !validatePhone(newClientPhone)) return alert('Numer telefonu musi zaczynać się od +48 i zawierać 9 cyfr.');
 
                 const { data: newClient, error: clientErr } = await supabase.from('clients').insert({
                     name: newClientName,
@@ -263,7 +292,7 @@ const VisitModal: React.FC<VisitModalProps> = ({ isOpen, onClose, initialDate, v
     const handleWhatsAppReminder = () => {
         if (isNewClient || !clientId) return alert('Wybierz klienta z listy');
         const client = clients?.find(c => c.id === clientId);
-        if (!client) return;
+        if (!client || !client.phone) return alert('Klient nie ma numeru telefonu');
 
         const dateObj = new Date(date);
         const formattedDate = format(dateObj, 'd MMMM', { locale: pl });
@@ -300,6 +329,15 @@ const VisitModal: React.FC<VisitModalProps> = ({ isOpen, onClose, initialDate, v
                         <p className="text-text-muted text-xs sm:text-sm font-medium">Uzupełnij szczegóły rezerwacji.</p>
                     </div>
                     <div className="flex gap-2">
+                        {visitId && (
+                            <button
+                                onClick={handleDelete}
+                                className="p-3 bg-red-50 border border-red-100 text-red-500 hover:bg-red-500 hover:text-white rounded-2xl transition-all shadow-sm"
+                                title="Usuń wizytę"
+                            >
+                                <Trash2 size={20} />
+                            </button>
+                        )}
                         <button onClick={handleClose} className="p-3 bg-surface border border-border-color text-text-muted hover:text-red-500 hover:border-red-100 rounded-2xl transition-all shadow-sm">
                             <X size={20} />
                         </button>
