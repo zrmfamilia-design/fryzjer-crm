@@ -16,6 +16,7 @@ const cn = (...inputs: ClassValue[]) => twMerge(clsx(inputs));
 const ClientsPage: React.FC = () => {
     const { data: clients } = useSupabaseData<Client>('clients');
     const { data: visits } = useSupabaseData<any>('visits');
+    const { data: services } = useSupabaseData<any>('services');
 
     const [searchParams] = useSearchParams();
     const [search, setSearch] = useState('');
@@ -383,7 +384,7 @@ const ClientsPage: React.FC = () => {
                                                 {clientVisits.map(visit => {
                                                     const vDate = ensureDate(visit.date);
                                                     const visitServices = (visit.service_ids || visit.serviceIds || []).map((sid: any) => {
-                                                        const s = (visits as any[]).find(v => v.id === sid); // This is wrong, should be from services
+                                                        const s = (services as any[])?.find(v => v.id === sid);
                                                         return s?.name;
                                                     }).filter(Boolean).join(', ');
 

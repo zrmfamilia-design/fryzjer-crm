@@ -246,7 +246,71 @@ const VisitModal: React.FC<VisitModalProps> = ({ isOpen, onClose, initialDate, v
                 used_products: usedProducts
             };
 
-            if (visitId && existingVisit) {
+            // Check if client already has a visit on this day
+            let existingDayVisit = null;
+            if (!visitId && finalClientId) {
+                const dayStart = new Date(visitDate);
+                dayStart.setHours(0, 0, 0, 0);
+                const dayEnd = new Date(visitDate);
+                dayEnd.setHours(23, 59, 59, 999);
+
+                const { data: found } = await supabase
+                    .from('visits')
+                    .select('*')
+                    .eq('client_id', finalClientId)
+                    .gte('date', dayStart.toISOString())
+                    .lte('date', dayEnd.toISOString())
+                    .maybeSingle(); // Use maybeSingle to avoid error if 0 or >1 (though >1 shouldn't happen ideally, if so we take one)
+
+                existingDayVisit = found;
+            }
+
+            if (existingDayVisit) {
+                // MERGE with existing visit
+                const confirmMerge = confirm('Ten klient ma już wizytę w tym dniu. Czy chcesz dołączyć te usługi do istniejącej wizyty?');
+                if (confirmMerge) {
+                    const mergedServices = [...(existingDayVisit.service_ids || existingDayVisit.serviceIds || []), ...serviceIds];
+                    // Filter duplicates? Maybe user WANTS 2 cuts? Let's keep them unless exactly same? 
+                    // Usually distinct services. Let's make them unique just in case.
+                    const uniqueServices = Array.from(new Set(mergedServices));
+
+                    const mergedPrice = (existingDayVisit.final_price || existingDayVisit.finalPrice || 0) + Number(finalPrice);
+                    const mergedCost = (existingDayVisit.material_cost || existingDayVisit.materialCost || 0) + Number(materialCost);
+
+                    // Helper to normalize used products
+                    const normalize = (up: any) => ({ productId: up.productId || up.product_id, amountUsed: up.amountUsed, calculatedCost: up.calculatedCost });
+                    const oldUsed = (existingDayVisit.used_products || existingDayVisit.usedProducts || []).map(normalize);
+                    const newUsed = usedProducts.map(normalize);
+                    const mergedProducts = [...oldUsed, ...newUsed];
+
+                    const mergedNotes = [existingDayVisit.technical_notes, technicalNotes].filter(Boolean).join('\n---\n');
+                    const mergedPhotos = [...(existingDayVisit.photos || []), ...photos];
+
+                    const updateData = {
+                        service_ids: uniqueServices,
+                        final_price: mergedPrice,
+                        material_cost: mergedCost,
+                        technical_notes: mergedNotes,
+                        photos: mergedPhotos,
+                        used_products: mergedProducts
+                        // Keep original date/time of the first visit? Or update to latest? 
+                        // Usually keep original time, just add services.
+                    };
+
+                    const { error: mergeErr } = await supabase.from('visits').update(updateData).eq('id', existingDayVisit.id);
+                    if (mergeErr) {
+                        alert(`Błąd łączenia wizyt: ${mergeErr.message}`);
+                        throw mergeErr;
+                    }
+                } else {
+                    // User said NO, create separate visit
+                    const { error: visitInsErr } = await supabase.from('visits').insert([visitData]);
+                    if (visitInsErr) {
+                        alert(`Błąd dodawania wizyty: ${visitInsErr.message}`);
+                        throw visitInsErr;
+                    }
+                }
+            } else if (visitId && existingVisit) {
                 // Refund old products stock
                 const oldUsed = existingVisit.used_products || existingVisit.usedProducts || [];
                 for (const oldProd of oldUsed) {
