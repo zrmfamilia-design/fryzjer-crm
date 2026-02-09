@@ -135,7 +135,7 @@ const Layout: React.FC = () => {
 
             {/* Main Content Area */}
             <main className="flex-1 relative bg-background transition-colors duration-300">
-                <div className="max-w-7xl mx-auto flex flex-col w-full px-0 sm:px-6 lg:px-8">
+                <div className="max-w-7xl mx-auto flex flex-col w-full px-0 sm:px-6 lg:px-8 h-full">
                     <Outlet />
                 </div>
             </main>

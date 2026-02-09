@@ -191,7 +191,7 @@ const CalendarPage: React.FC = () => {
                 </button>
             </div>
 
-            <div className="flex-1 bg-white p-4 rounded-2xl shadow-xl shadow-gray-200/50 border border-gray-100 text-gray-800 flex flex-col min-h-0">
+            <div className="flex-1 bg-white p-4 rounded-2xl shadow-xl shadow-gray-200/50 border border-gray-100 text-gray-800 flex flex-col min-h-[600px] h-full">
                 <style>{`
                     .rbc-calendar { font-family: 'Inter', sans-serif; }
                     .rbc-header { padding: 8px sm:12px; font-weight: 700; color: #6b7280; text-transform: uppercase; font-size: 10px sm:11px; letter-spacing: 0.05em; border-bottom: 2px solid #f3f4f6; }
