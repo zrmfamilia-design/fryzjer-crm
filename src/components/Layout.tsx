@@ -61,7 +61,7 @@ const Layout: React.FC = () => {
 
                     {/* Navigation Links (Desktop) */}
                     <nav className="hidden lg:flex items-center gap-1 xl:gap-2">
-                        <NavItem to="/" label="Dashboard" />
+                        <NavItem to="/" label="KALENDARZ (DASHBOARD)" />
                         <NavItem to="/calendar" label="Kalendarz" />
                         <NavItem to="/clients" label="Klienci" />
                         <NavItem to="/services" label="Usługi" />
@@ -119,7 +119,7 @@ const Layout: React.FC = () => {
                             <span className="text-white">Menu</span>
                         </div>
                         <nav className="flex flex-col gap-2">
-                            <MobileNavItem to="/" label="Dashboard" onClick={() => setIsMenuOpen(false)} />
+                            <MobileNavItem to="/" label="KALENDARZ (DASHBOARD)" onClick={() => setIsMenuOpen(false)} />
                             <MobileNavItem to="/calendar" label="Kalendarz" onClick={() => setIsMenuOpen(false)} />
                             <MobileNavItem to="/clients" label="Klienci" onClick={() => setIsMenuOpen(false)} />
                             <MobileNavItem to="/services" label="Usługi" onClick={() => setIsMenuOpen(false)} />

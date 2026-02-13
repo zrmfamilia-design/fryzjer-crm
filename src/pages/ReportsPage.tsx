@@ -118,11 +118,15 @@ const ReportsPage: React.FC = () => {
         });
         const totalServicesInPeriod = Object.values(serviceMap).reduce((acc, count) => acc + count, 0);
         const pieData = Object.entries(serviceMap)
-            .map(([name, value]) => ({
-                name,
-                value,
-                percent: totalServicesInPeriod > 0 ? (value / totalServicesInPeriod) * 100 : 0
-            }))
+            .map(([name, value]) => {
+                const s = (services as any[]).find(ser => ser.name === name);
+                return {
+                    name,
+                    value,
+                    percent: totalServicesInPeriod > 0 ? (value / totalServicesInPeriod) * 100 : 0,
+                    color: s?.color || '#7c3aed' // Fallback to primary if no color
+                };
+            })
             .sort((a, b) => b.value - a.value);
 
         // Client Statistics (Top Clients in range)
@@ -285,8 +289,8 @@ const ReportsPage: React.FC = () => {
                                     paddingAngle={8}
                                     dataKey="value"
                                 >
-                                    {stats.pieData.map((_, index) => (
-                                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                                    {stats.pieData.map((entry: any, index: number) => (
+                                        <Cell key={`cell-${index}`} fill={entry.color} />
                                     ))}
                                 </Pie>
                                 <Tooltip
