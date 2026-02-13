@@ -62,17 +62,7 @@ const ReportsPage: React.FC = () => {
             isWithinInterval(ensureDate(v.date), { start: prevMonthStart, end: prevMonthEnd })
         );
 
-        // Filter expenses by range
-        const rangeExpenses = (expenses || []).filter(e =>
-            isWithinInterval(ensureDate(e.date), { start, end })
-        );
-        const totalExpenses = rangeExpenses.reduce((acc, e) => acc + e.amount, 0);
 
-        // Previous month expenses
-        const prevExpensesData = (expenses || []).filter(e =>
-            isWithinInterval(ensureDate(e.date), { start: prevMonthStart, end: prevMonthEnd })
-        );
-        const prevTotalExpenses = prevExpensesData.reduce((acc, e) => acc + e.amount, 0);
 
         // Current stats
         const currentRevenue = rangeVisits.reduce((acc, v) => acc + (v.final_price || v.finalPrice || 0), 0);
