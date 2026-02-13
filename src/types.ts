@@ -21,14 +21,17 @@ export interface Product {
     name: string;
     brand: string;
     price: number;
-    baseWeight: number; // e.g. 60g tube
-    currentStock: number; // in grams/ml
+    baseWeight: number; // e.g. 60g tube OR 1 piece
+    currentStock: number; // in grams/ml OR pieces
+    unit: 'g' | 'szt';
 }
 
 export interface UsedProduct {
     productId: number;
-    amountUsed: number; // in grams/ml
+    amountUsed: number; // in grams/ml OR pieces
     calculatedCost: number;
+    name?: string; // Cache for display
+    unit?: 'g' | 'szt';
 }
 
 export interface Visit {

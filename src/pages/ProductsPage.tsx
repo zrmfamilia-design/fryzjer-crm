@@ -20,6 +20,7 @@ const ProductsPage: React.FC = () => {
     const [price, setPrice] = useState<number | ''>('');
     const [baseWeight, setBaseWeight] = useState<number | ''>('');
     const [currentStock, setCurrentStock] = useState<number | ''>('');
+    const [unit, setUnit] = useState<'g' | 'szt'>('g');
 
     const { data: visits } = useSupabaseData<Visit>('visits');
 
@@ -29,6 +30,7 @@ const ProductsPage: React.FC = () => {
         setPrice('');
         setBaseWeight('');
         setCurrentStock('');
+        setUnit('g');
         setEditingProduct(null);
         setShowAddForm(false);
     };
@@ -40,6 +42,7 @@ const ProductsPage: React.FC = () => {
         setPrice(product.price);
         setBaseWeight(product.baseWeight || (product as any).base_weight);
         setCurrentStock(product.currentStock || (product as any).current_stock);
+        setUnit(product.unit || 'g');
         setShowAddForm(true);
     };
 
@@ -53,11 +56,11 @@ const ProductsPage: React.FC = () => {
         try {
             if (editingProduct?.id) {
                 await supabase.from('products').update({
-                    name, brand, price: Number(price), base_weight: weightValue, current_stock: stockValue
+                    name, brand, price: Number(price), base_weight: weightValue, current_stock: stockValue, unit
                 }).eq('id', editingProduct.id);
             } else {
                 await supabase.from('products').insert({
-                    name, brand, price: Number(price), base_weight: weightValue, current_stock: stockValue
+                    name, brand, price: Number(price), base_weight: weightValue, current_stock: stockValue, unit
                 });
             }
             resetForm();
@@ -302,9 +305,28 @@ const ProductsPage: React.FC = () => {
                 <div className="bg-surface p-4 sm:p-8 rounded-3xl border-2 border-primary/10 shadow-xl animate-in fade-in slide-in-from-top-4 duration-300 transition-colors">
                     <form onSubmit={handleAddProduct} className="grid grid-cols-1 md:grid-cols-4 gap-6">
                         <div className="space-y-2">
+                            <label className="text-[10px] font-black text-text-muted uppercase tracking-widest ml-2">Typ / Jednostka</label>
+                            <div className="flex bg-background border-2 border-border-color rounded-2xl p-1">
+                                <button
+                                    type="button"
+                                    onClick={() => setUnit('g')}
+                                    className={`flex-1 py-2 rounded-xl text-xs font-black transition-all ${unit === 'g' ? 'bg-primary text-white shadow-md' : 'text-text-muted hover:text-text-main'}`}
+                                >
+                                    GRAMY/ML
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => setUnit('szt')}
+                                    className={`flex-1 py-2 rounded-xl text-xs font-black transition-all ${unit === 'szt' ? 'bg-primary text-white shadow-md' : 'text-text-muted hover:text-text-main'}`}
+                                >
+                                    SZTUKI
+                                </button>
+                            </div>
+                        </div>
+                        <div className="space-y-2 col-span-1 md:col-span-1">
                             <label className="text-[10px] font-black text-text-muted uppercase tracking-widest ml-2">Nazwa Produktu</label>
                             <input
-                                placeholder="np. Londa 7/7"
+                                placeholder={unit === 'g' ? "np. Londa 7/7" : "np. Peleryny jednorazowe"}
                                 value={name}
                                 onChange={e => setName(e.target.value)}
                                 className="w-full bg-background border-2 border-border-color rounded-2xl px-5 py-3 text-text-main focus:border-primary outline-none transition-all"
@@ -335,12 +357,14 @@ const ProductsPage: React.FC = () => {
                             </div>
                         </div>
                         <div className="space-y-2">
-                            <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-2">Pojemność/Waga (g/ml)</label>
+                            <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-2">
+                                {unit === 'g' ? 'Pojemność tubki (g/ml)' : 'Ilość w opakowaniu (szt)'}
+                            </label>
                             <div className="relative">
                                 <Scale size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300" />
                                 <input
                                     type="number"
-                                    placeholder="np. 60"
+                                    placeholder={unit === 'g' ? "np. 60" : "np. 1"}
                                     value={baseWeight}
                                     onChange={e => setBaseWeight(e.target.value ? Number(e.target.value) : '')}
                                     className="w-full bg-gray-50 border-2 border-gray-100 rounded-2xl pl-10 pr-5 py-3 text-gray-900 focus:border-primary outline-none"
@@ -349,12 +373,14 @@ const ProductsPage: React.FC = () => {
                             </div>
                         </div>
                         <div className="space-y-2">
-                            <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-2">Stan Aktualny (g/ml)</label>
+                            <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-2">
+                                {unit === 'g' ? 'Stan Aktualny (g/ml)' : 'Stan Aktualny (szt)'}
+                            </label>
                             <div className="relative">
                                 <Box size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300" />
                                 <input
                                     type="number"
-                                    placeholder="Pozostaw puste aby użyć pełnej tubki"
+                                    placeholder={unit === 'g' ? "Pozostaw puste aby użyć pełnej tubki" : "np. 10"}
                                     value={currentStock}
                                     onChange={e => setCurrentStock(e.target.value ? Number(e.target.value) : '')}
                                     className="w-full bg-gray-50 border-2 border-gray-100 rounded-2xl pl-10 pr-5 py-3 text-gray-900 border-primary/20 focus:border-primary outline-none"
@@ -421,9 +447,9 @@ const ProductsPage: React.FC = () => {
                                         <div className="flex flex-col items-center">
                                             <div className="flex items-center gap-2">
                                                 <span className={`text-lg font-black ${((product as any).current_stock || product.currentStock) < (((product as any).base_weight || product.baseWeight) * 0.2) ? 'text-red-500' : 'text-gray-900'}`}>
-                                                    {Math.round((product as any).current_stock || product.currentStock)}g
+                                                    {Math.round((product as any).current_stock || product.currentStock)}{product.unit || 'g'}
                                                 </span>
-                                                <span className="text-[10px] text-gray-400 font-bold">/ {((product as any).base_weight || product.baseWeight)}g</span>
+                                                <span className="text-[10px] text-gray-400 font-bold">/ {((product as any).base_weight || product.baseWeight)}{product.unit || 'g'}</span>
                                             </div>
                                             <div className="w-24 h-1.5 bg-gray-100 rounded-full mt-1 overflow-hidden">
                                                 <div

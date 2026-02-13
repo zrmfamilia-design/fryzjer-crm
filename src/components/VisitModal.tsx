@@ -119,21 +119,43 @@ const VisitModal: React.FC<VisitModalProps> = ({ isOpen, onClose, initialDate, v
         setShowProductDropdown(false);
         setProductSearch('');
 
-        const gramsStr = prompt(`Ile gram/ml wykorzytałaś produktu: ${product.name}?`, "30");
-        if (!gramsStr) return;
+        const isUnit = product.unit === 'szt';
+        const promptMsg = isUnit
+            ? `Ile sztuk produktu "${product.name}" sprzedajesz/używasz?`
+            : `Ile gram/ml wykorzytałaś produktu: ${product.name}?`;
 
-        const grams = Number(gramsStr);
-        if (isNaN(grams) || grams <= 0) return alert('Podaj prawidłową ilość');
+        const amountStr = prompt(promptMsg, isUnit ? "1" : "30");
+        if (!amountStr) return;
 
-        const cost = (grams / (product.base_weight || product.baseWeight)) * product.price;
+        const amount = Number(amountStr);
+        if (isNaN(amount) || amount <= 0) return alert('Podaj prawidłową ilość');
+
+        let cost = 0;
+        if (isUnit) {
+            cost = amount * product.price;
+            // For unit products (sales), we ADD IT to the final price automatically
+            setFinalPrice(prev => Number(prev) + cost);
+        } else {
+            cost = (amount / (product.base_weight || product.baseWeight)) * product.price;
+        }
 
         setUsedProducts(prev => [
             ...prev,
-            { productId, amountUsed: grams, calculatedCost: Math.round(cost * 100) / 100 }
+            {
+                productId,
+                amountUsed: amount,
+                calculatedCost: Math.round(cost * 100) / 100,
+                name: product.name,
+                unit: product.unit || 'g'
+            }
         ]);
     };
 
     const handleRemoveUsedProduct = (index: number) => {
+        const item = usedProducts[index];
+        if (item && item.unit === 'szt') {
+            setFinalPrice(prev => Math.max(0, Number(prev) - (item.calculatedCost || 0)));
+        }
         setUsedProducts(prev => prev.filter((_, i) => i !== index));
     };
 
