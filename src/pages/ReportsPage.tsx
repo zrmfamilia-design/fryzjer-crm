@@ -15,7 +15,7 @@ const ReportsPage: React.FC = () => {
     const { data: visits } = useSupabaseData<any>('visits');
     const { data: services } = useSupabaseData<any>('services');
     const { data: clients } = useSupabaseData<any>('clients');
-    const { data: expenses } = useSupabaseData<any>('expenses');
+
 
     const [startDate, setStartDate] = useState(format(startOfMonth(new Date()), 'yyyy-MM-dd'));
     const [endDate, setEndDate] = useState(format(endOfMonth(new Date()), 'yyyy-MM-dd'));
@@ -34,7 +34,7 @@ const ReportsPage: React.FC = () => {
     }, []);
 
     const stats = useMemo(() => {
-        if (!visits || !services || !clients || !expenses) return null;
+        if (!visits || !services || !clients) return null;
 
         let start: Date;
         let end: Date;
@@ -143,7 +143,7 @@ const ReportsPage: React.FC = () => {
             dynamicTrend, pieData, topClients,
             isDaily: daysDiff <= 31
         };
-    }, [visits, services, clients, expenses, startDate, endDate, selectionMode, selectedMonth]);
+    }, [visits, services, clients, startDate, endDate, selectionMode, selectedMonth]);
 
     if (!stats) return <div className="p-10 text-center text-gray-500 font-bold">Analizowanie danych...</div>;
 
