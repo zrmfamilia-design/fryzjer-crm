@@ -116,8 +116,13 @@ const ReportsPage: React.FC = () => {
                 if (s) serviceMap[s.name] = (serviceMap[s.name] || 0) + 1;
             });
         });
+        const totalServicesInPeriod = Object.values(serviceMap).reduce((acc, count) => acc + count, 0);
         const pieData = Object.entries(serviceMap)
-            .map(([name, value]) => ({ name, value }))
+            .map(([name, value]) => ({
+                name,
+                value,
+                percent: totalServicesInPeriod > 0 ? (value / totalServicesInPeriod) * 100 : 0
+            }))
             .sort((a, b) => b.value - a.value);
 
         // Client Statistics (Top Clients in range)
@@ -285,10 +290,22 @@ const ReportsPage: React.FC = () => {
                                     ))}
                                 </Pie>
                                 <Tooltip
-                                    formatter={(v: any) => `${Math.round(Number(v))} PLN`}
+                                    formatter={(value: any, name: any, props: any) => {
+                                        const percent = props.payload.percent;
+                                        return [`${value} wizyt (${percent.toFixed(1)}%)`, name];
+                                    }}
                                     contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
                                 />
-                                <Legend verticalAlign="middle" align="right" layout="vertical" wrapperStyle={{ paddingLeft: '20px', fontSize: '12px', fontWeight: 800 }} />
+                                <Legend
+                                    verticalAlign="middle"
+                                    align="right"
+                                    layout="vertical"
+                                    formatter={(value, entry: any) => {
+                                        const { percent } = entry.payload;
+                                        return <span className="text-gray-700">{value} ({percent.toFixed(1)}%)</span>;
+                                    }}
+                                    wrapperStyle={{ paddingLeft: '20px', fontSize: '12px', fontWeight: 800 }}
+                                />
                             </PieChart>
                         </ResponsiveContainer>
                     </div>
