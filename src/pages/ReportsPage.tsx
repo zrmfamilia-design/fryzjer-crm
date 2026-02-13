@@ -210,14 +210,14 @@ const ReportsPage: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <StatCard
                     title="Całkowity Przychód"
-                    value={`${stats.currentRevenue} PLN`}
+                    value={`${stats.currentRevenue.toFixed(2)} PLN`}
                     trend={stats.revenueChange}
                     icon={<DollarSign size={24} className="text-white" />}
                     iconBg="bg-primary"
                 />
                 <StatCard
                     title="Zysk z Usług"
-                    value={`${stats.currentProfit} PLN`}
+                    value={`${stats.currentProfit.toFixed(2)} PLN`}
                     trend={stats.profitChange}
                     subvalue="Przychód pomniejszony o zużycie materiałów"
                     icon={<TrendingUp size={24} className="text-white" />}
