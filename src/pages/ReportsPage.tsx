@@ -108,25 +108,28 @@ const ReportsPage: React.FC = () => {
             });
 
         // Service Distribution (in range) - Count based on occurrences, not revenue
-        const serviceMap: Record<string, number> = {};
+        const serviceMap: Record<string, { count: number, color: string }> = {};
         rangeVisits.forEach(v => {
             const sid_list = v.service_ids || v.serviceIds || [];
             sid_list.forEach((sid: any) => {
                 const s = (services as any[]).find(ser => ser.id === sid);
-                if (s) serviceMap[s.name] = (serviceMap[s.name] || 0) + 1;
+                if (s) {
+                    if (!serviceMap[s.name]) {
+                        serviceMap[s.name] = { count: 0, color: s.color || s.colorCode || '#7c3aed' };
+                    }
+                    serviceMap[s.name].count += 1;
+                }
             });
         });
-        const totalServicesInPeriod = Object.values(serviceMap).reduce((acc, count) => acc + count, 0);
+
+        const totalServicesInPeriod = Object.values(serviceMap).reduce((acc, obj) => acc + obj.count, 0);
         const pieData = Object.entries(serviceMap)
-            .map(([name, value]) => {
-                const s = (services as any[]).find(ser => ser.name === name);
-                return {
-                    name,
-                    value,
-                    percent: totalServicesInPeriod > 0 ? (value / totalServicesInPeriod) * 100 : 0,
-                    color: s?.color || '#7c3aed' // Fallback to primary if no color
-                };
-            })
+            .map(([name, obj]) => ({
+                name,
+                value: obj.count,
+                percent: totalServicesInPeriod > 0 ? (obj.count / totalServicesInPeriod) * 100 : 0,
+                color: obj.color
+            }))
             .sort((a, b) => b.value - a.value);
 
         // Client Statistics (Top Clients in range)
