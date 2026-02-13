@@ -77,13 +77,13 @@ const ReportsPage: React.FC = () => {
         // Current stats
         const currentRevenue = rangeVisits.reduce((acc, v) => acc + (v.final_price || v.finalPrice || 0), 0);
         const currentVisitCosts = rangeVisits.reduce((acc, v) => acc + (v.material_cost || v.materialCost || 0), 0);
-        const currentProfit = currentRevenue - currentVisitCosts - totalExpenses;
+        const currentProfit = currentRevenue - currentVisitCosts; // EXCLUDED general expenses as requested
         const currentCount = rangeVisits.length;
 
         // Prev stats
         const prevRevenue = prevVisits.reduce((acc, v) => acc + (v.final_price || v.finalPrice || 0), 0);
         const prevVisitCosts = prevVisits.reduce((acc, v) => acc + (v.material_cost || v.materialCost || 0), 0);
-        const prevProfit = prevRevenue - prevVisitCosts - prevTotalExpenses;
+        const prevProfit = prevRevenue - prevVisitCosts; // EXCLUDED general expenses as requested
         const prevCount = prevVisits.length;
 
         // MoM Changes
@@ -95,29 +95,25 @@ const ReportsPage: React.FC = () => {
         const daysDiff = differenceInDays(end, start);
         const dynamicTrend = daysDiff <= 31
             ? eachDayOfInterval({ start, end }).map(date => {
-                const dayVisits = visits.filter(v => isSameDay(ensureDate(v.date), date));
-                const dayExpenses = (expenses || []).filter(e => isSameDay(ensureDate(e.date), date));
+                const dayVisits = rangeVisits.filter(v => isSameDay(ensureDate(v.date), date));
                 const revenue = dayVisits.reduce((acc, v) => acc + (v.final_price || v.finalPrice || 0), 0);
-                const costs = dayVisits.reduce((acc, v) => acc + (v.material_cost || v.materialCost || 0), 0) +
-                    dayExpenses.reduce((acc, e) => acc + e.amount, 0);
+                const costs = dayVisits.reduce((acc, v) => acc + (v.material_cost || v.materialCost || 0), 0);
                 return {
                     name: format(date, 'dd.MM', { locale: pl }),
-                    Revenue: revenue,
-                    Costs: costs,
-                    Profit: revenue - costs,
+                    Revenue: Number(revenue.toFixed(2)),
+                    Costs: Number(costs.toFixed(2)),
+                    Profit: Number((revenue - costs).toFixed(2)),
                 };
             })
             : eachMonthOfInterval({ start, end }).map(date => {
                 const monthVisits = visits.filter(v => isSameMonth(ensureDate(v.date), date));
-                const monthExpenses = (expenses || []).filter(e => isSameMonth(ensureDate(e.date), date));
                 const revenue = monthVisits.reduce((acc, v) => acc + (v.final_price || v.finalPrice || 0), 0);
-                const costs = monthVisits.reduce((acc, v) => acc + (v.material_cost || v.materialCost || 0), 0) +
-                    monthExpenses.reduce((acc, e) => acc + e.amount, 0);
+                const costs = monthVisits.reduce((acc, v) => acc + (v.material_cost || v.materialCost || 0), 0);
                 return {
                     name: format(date, 'MMM yy', { locale: pl }),
-                    Revenue: revenue,
-                    Costs: costs,
-                    Profit: revenue - costs,
+                    Revenue: Number(revenue.toFixed(2)),
+                    Costs: Number(costs.toFixed(2)),
+                    Profit: Number((revenue - costs).toFixed(2)),
                 };
             });
 
@@ -150,7 +146,9 @@ const ReportsPage: React.FC = () => {
         const topClients = Object.values(clientStatsMap).sort((a: any, b: any) => b.total - a.total).slice(0, 5);
 
         return {
-            currentRevenue, currentCount, currentProfit,
+            currentRevenue: Number(currentRevenue.toFixed(2)),
+            currentCount,
+            currentProfit: Number(currentProfit.toFixed(2)),
             revenueChange, profitChange, countChange,
             dynamicTrend, pieData, topClients,
             isDaily: daysDiff <= 31
@@ -228,10 +226,10 @@ const ReportsPage: React.FC = () => {
                     iconBg="bg-primary"
                 />
                 <StatCard
-                    title="Realny Zysk"
+                    title="Zysk z Usług"
                     value={`${stats.currentProfit} PLN`}
                     trend={stats.profitChange}
-                    subvalue="Po odliczeniu materiałów i kosztów stałych"
+                    subvalue="Przychód pomniejszony o zużycie materiałów"
                     icon={<TrendingUp size={24} className="text-white" />}
                     iconBg="bg-green-500"
                 />

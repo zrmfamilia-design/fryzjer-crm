@@ -85,7 +85,7 @@ const ExpensesPage: React.FC = () => {
         const materialCosts = currentMonthVisits.reduce((sum: number, v: any) => sum + (v.material_cost || v.materialCost || 0), 0);
 
         const expensesTotal = currentMonthExpenses.reduce((acc, e) => acc + e.amount, 0);
-        const fixed = currentMonthExpenses.filter(e => e.isRecurring).reduce((acc, e) => acc + e.amount, 0);
+        const fixed = currentMonthExpenses.filter(e => e.isRecurring || e.is_recurring).reduce((acc, e) => acc + e.amount, 0);
 
         // Variable = Expenses Variable + Material Costs
         const variableExpenses = expensesTotal - fixed;
@@ -94,7 +94,14 @@ const ExpensesPage: React.FC = () => {
         const totalCosts = expensesTotal + materialCosts;
         const realProfit = revenue - totalCosts;
 
-        return { total: totalCosts, fixed, variable: totalVariable, materialCosts, revenue, realProfit };
+        return {
+            total: Number(totalCosts.toFixed(2)),
+            fixed: Number(fixed.toFixed(2)),
+            variable: Number(totalVariable.toFixed(2)),
+            materialCosts: Number(materialCosts.toFixed(2)),
+            revenue: Number(revenue.toFixed(2)),
+            realProfit: Number(realProfit.toFixed(2))
+        };
     }, [expenses, visits, dashboardMonth]);
 
     // Automation: Seed recurring expenses for current month
@@ -329,7 +336,7 @@ const ExpensesPage: React.FC = () => {
                                 )] : []
                             )
                             .map((item) => React.isValidElement(item) ? item : (
-                                <div key={(item as any).id} /* ... existing expense render ... */ className="bg-surface p-5 sm:p-6 rounded-3xl border border-border-color shadow-xl shadow-gray-200/50 dark:shadow-none flex flex-col md:flex-row justify-between items-start md:items-center gap-4 md:gap-6 group hover:border-red-100 dark:hover:border-red-900 transition-all">
+                                <div key={(item as any).id} className="bg-surface p-5 sm:p-6 rounded-3xl border border-border-color shadow-xl shadow-gray-200/50 dark:shadow-none flex flex-col md:flex-row justify-between items-start md:items-center gap-4 md:gap-6 group hover:border-red-100 dark:hover:border-red-900 transition-all">
                                     <div className="flex items-center gap-4 sm:gap-6 w-full">
                                         <div className="bg-rose-50 dark:bg-rose-900/20 p-4 rounded-2xl text-rose-500 shadow-sm border border-rose-100 dark:border-rose-900/30 transition-colors flex-none">
                                             <Filter size={24} />
