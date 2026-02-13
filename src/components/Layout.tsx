@@ -1,3 +1,4 @@
+// Update for KALENDARZ labels and colors
 import React, { useState, useEffect } from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { UserCircle, Scissors, Sun, Moon, LogOut, Menu, X } from 'lucide-react';
