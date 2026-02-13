@@ -163,15 +163,15 @@ const ExpensesPage: React.FC = () => {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div className="bg-surface p-5 sm:p-6 rounded-3xl border border-border-color shadow-xl shadow-gray-200/50 dark:shadow-none transition-colors">
                         <div className="text-[10px] font-black uppercase text-text-muted tracking-widest mb-1">Przychód (Wizyty)</div>
-                        <div className="text-2xl sm:text-3xl font-black text-green-600">{stats?.revenue || 0} <span className="text-xs sm:text-sm font-bold text-green-400">PLN</span></div>
+                        <div className="text-2xl sm:text-3xl font-black text-green-600">{(stats?.revenue || 0).toFixed(2)} <span className="text-xs sm:text-sm font-bold text-green-400">PLN</span></div>
                     </div>
                     <div className="bg-surface p-5 sm:p-6 rounded-3xl border border-border-color shadow-xl shadow-gray-200/50 dark:shadow-none transition-colors">
                         <div className="text-[10px] font-black uppercase text-text-muted tracking-widest mb-1">Koszty Całkowite (Wydatki + Materiał)</div>
-                        <div className="text-2xl sm:text-3xl font-black text-red-600">-{stats?.total || 0} <span className="text-xs sm:text-sm font-bold text-red-400">PLN</span></div>
+                        <div className="text-2xl sm:text-3xl font-black text-red-600">-{(stats?.total || 0).toFixed(2)} <span className="text-xs sm:text-sm font-bold text-red-400">PLN</span></div>
                     </div>
                     <div className={`${(stats?.realProfit || 0) >= 0 ? 'bg-green-50 dark:bg-green-900/10 border-green-100 dark:border-green-900/30' : 'bg-red-50 dark:bg-red-900/10 border-red-100 dark:border-red-900/30'} p-5 sm:p-6 rounded-3xl border transition-colors`}>
                         <div className={`text-[10px] font-black uppercase tracking-widest mb-1 ${(stats?.realProfit || 0) >= 0 ? 'text-green-600' : 'text-red-600'}`}>Zysk "Na Rękę"</div>
-                        <div className={`text-2xl sm:text-3xl font-black ${(stats?.realProfit || 0) >= 0 ? 'text-green-700' : 'text-red-700'}`}>{stats?.realProfit || 0} <span className={`text-xs sm:text-sm font-bold ${(stats?.realProfit || 0) >= 0 ? 'text-green-500' : 'text-red-500'}`}>PLN</span></div>
+                        <div className={`text-2xl sm:text-3xl font-black ${(stats?.realProfit || 0) >= 0 ? 'text-green-700' : 'text-red-700'}`}>{(stats?.realProfit || 0).toFixed(2)} <span className={`text-xs sm:text-sm font-bold ${(stats?.realProfit || 0) >= 0 ? 'text-green-500' : 'text-red-500'}`}>PLN</span></div>
                     </div>
                 </div>
             </div>
@@ -303,11 +303,7 @@ const ExpensesPage: React.FC = () => {
                                 if (typeFilter === 'one-time') return !exp.isRecurring;
                                 return true;
                             })
-                            .map(exp => (
-                                <div key={exp.id} className="bg-surface p-5 sm:p-6 rounded-3xl border border-border-color shadow-xl shadow-gray-200/50 dark:shadow-none flex flex-col md:flex-row justify-between items-start md:items-center gap-4 md:gap-6 group hover:border-red-100 dark:hover:border-red-900 transition-all">
-                                    {/* ... expense item ... */}
-                                </div>
-                            ))
+
                             // Prepend Material Costs
                             .concat(
                                 (typeFilter === 'all' || typeFilter === 'one-time') ? [(
