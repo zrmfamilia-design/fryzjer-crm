@@ -1,3 +1,5 @@
+// Build ID: 2026-02-13-22-24
+// Build ID: 2026-02-13-22-25
 import React, { useMemo, useState } from 'react';
 import { useSupabaseData } from '../hooks/useSupabaseData';
 import { Link } from 'react-router-dom';
@@ -112,7 +114,7 @@ const ReportsPage: React.FC = () => {
         rangeVisits.forEach(v => {
             const sid_list = v.service_ids || v.serviceIds || [];
             sid_list.forEach((sid: any) => {
-                const s = (services as any[]).find(ser => ser.id === sid);
+                const s = (services as any[]).find(ser => String(ser.id) === String(sid));
                 if (s) {
                     if (!serviceMap[s.name]) {
                         serviceMap[s.name] = { count: 0, color: s.color || s.colorCode || '#7c3aed' };
