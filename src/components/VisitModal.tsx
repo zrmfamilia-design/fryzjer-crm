@@ -33,8 +33,8 @@ const VisitModal: React.FC<VisitModalProps> = ({ isOpen, onClose, initialDate, v
     const [date, setDate] = useState('');
     const [clientId, setClientId] = useState<string | number | ''>('');
     const [serviceIds, setServiceIds] = useState<number[]>([]);
-    const [finalPrice, setFinalPrice] = useState<number | ''>(0);
-    const [materialCost, setMaterialCost] = useState<number | ''>(0);
+    const [finalPrice, setFinalPrice] = useState<number | ''>('');
+    const [materialCost, setMaterialCost] = useState<number | ''>('');
     const [technicalNotes, setTechnicalNotes] = useState('');
     const [clientGlobalNotes, setClientGlobalNotes] = useState('');
     const [photos, setPhotos] = useState<string[]>([]);
@@ -69,8 +69,8 @@ const VisitModal: React.FC<VisitModalProps> = ({ isOpen, onClose, initialDate, v
             setDate(initialDate ? format(initialDate, "yyyy-MM-dd'T'HH:mm") : format(new Date(), "yyyy-MM-dd'T'HH:mm"));
             setClientId('');
             setServiceIds([]);
-            setFinalPrice(0);
-            setMaterialCost(0);
+            setFinalPrice('');
+            setMaterialCost('');
             setTechnicalNotes('');
             setClientGlobalNotes('');
             setPhotos([]);
@@ -395,7 +395,7 @@ const VisitModal: React.FC<VisitModalProps> = ({ isOpen, onClose, initialDate, v
     const handleClose = () => {
         setClientId('');
         setServiceIds([]);
-        setFinalPrice(0);
+        setFinalPrice('');
         setIsNewClient(false);
         setNewClientName('');
         setNewClientPhone('');

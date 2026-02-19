@@ -11,7 +11,7 @@ import { format, isSameMonth, subMonths, isWithinInterval, startOfMonth, endOfMo
 import { pl } from 'date-fns/locale';
 import { ensureDate } from '../utils';
 
-const COLORS = ['#7c3aed', '#ef4444', '#3b82f6', '#10b981', '#f59e0b', '#ec4899'];
+
 
 const ReportsPage: React.FC = () => {
     const { data: visits } = useSupabaseData<any>('visits');
