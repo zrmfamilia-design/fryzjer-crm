@@ -1,3 +1,4 @@
+// VisitModal - build v1.3 (Price UX & Product Units)
 import React, { useState, useEffect, useRef } from 'react';
 import { useSupabaseData } from '../hooks/useSupabaseData';
 import { supabase } from '../lib/supabase';
@@ -32,8 +33,8 @@ const VisitModal: React.FC<VisitModalProps> = ({ isOpen, onClose, initialDate, v
     const [date, setDate] = useState('');
     const [clientId, setClientId] = useState<string | number | ''>('');
     const [serviceIds, setServiceIds] = useState<number[]>([]);
-    const [finalPrice, setFinalPrice] = useState<number>(0);
-    const [materialCost, setMaterialCost] = useState<number>(0);
+    const [finalPrice, setFinalPrice] = useState<number | ''>(0);
+    const [materialCost, setMaterialCost] = useState<number | ''>(0);
     const [technicalNotes, setTechnicalNotes] = useState('');
     const [clientGlobalNotes, setClientGlobalNotes] = useState('');
     const [photos, setPhotos] = useState<string[]>([]);
@@ -542,7 +543,7 @@ const VisitModal: React.FC<VisitModalProps> = ({ isOpen, onClose, initialDate, v
                             <input
                                 type="number"
                                 value={finalPrice}
-                                onChange={e => setFinalPrice(Number(e.target.value))}
+                                onChange={e => setFinalPrice(e.target.value === '' ? '' : Number(e.target.value))}
                                 className="w-full bg-surface border-2 border-border-color rounded-xl px-4 py-3 text-text-main font-black text-lg sm:text-xl focus:border-primary outline-none transition-colors"
                             />
                         </div>
@@ -551,7 +552,7 @@ const VisitModal: React.FC<VisitModalProps> = ({ isOpen, onClose, initialDate, v
                             <input
                                 type="number"
                                 value={materialCost}
-                                onChange={e => setMaterialCost(Number(e.target.value))}
+                                onChange={e => setMaterialCost(e.target.value === '' ? '' : Number(e.target.value))}
                                 className="w-full bg-surface border-2 border-border-color rounded-xl px-4 py-3 text-red-500 font-black text-lg sm:text-xl focus:border-red-200 outline-none transition-colors"
                             />
                         </div>

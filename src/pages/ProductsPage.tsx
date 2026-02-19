@@ -1,3 +1,4 @@
+// Product unit and sales deployment - build v1.2
 import React, { useState } from 'react';
 import { Box, Plus, Trash2, Package, DollarSign, Scale, Search, Upload, Download, Edit3, TrendingDown, AlertCircle, RefreshCcw } from 'lucide-react';
 import { format, addDays, isAfter } from 'date-fns';
